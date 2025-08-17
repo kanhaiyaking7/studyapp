@@ -1,430 +1,690 @@
 
-
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class Result extends StatefulWidget {
-  final Function onNext;
-  const Result({Key? key, required this.onNext}) : super(key: key);
+  final int xpEarned;
+  final int coinsEarned;
+  final Duration timeTaken;
+  final double accuracy;
+  final int correctAnswers;
+  final int totalQuestions;
+  final VoidCallback? onContinue;
+  final VoidCallback? onReview;
+
+
+  const Result({
+    Key? key,
+    this.xpEarned = 150,
+    this.coinsEarned = 25,
+    this.timeTaken = const Duration(minutes: 2, seconds: 35),
+    this.accuracy = 85.0,
+    this.correctAnswers = 8,
+    this.totalQuestions = 10,
+    this.onContinue,
+    this.onReview,
+  }) : super(key: key);
 
   @override
   State<Result> createState() => _ResultState();
 }
 
 class _ResultState extends State<Result> with TickerProviderStateMixin {
-  late AnimationController _progressController;
-  late Animation<double> _progressAnimation;
+  late AnimationController _mainAnimationController;
+  late AnimationController _xpAnimationController;
+  late AnimationController _coinAnimationController;
+  late AnimationController _accuracyAnimationController;
+  late AnimationController _celebrationController;
+
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<int> _xpCountAnimation;
+  late Animation<int> _coinCountAnimation;
+  late Animation<double> _accuracyProgressAnimation;
+  late Animation<double> _celebrationAnimation;
 
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
-      duration: const Duration(seconds: 2),
+
+    _initializeAnimations();
+    _startAnimations();
+  }
+
+  void _initializeAnimations() {
+    // Main entrance animation
+    _mainAnimationController = AnimationController(
       vsync: this,
+      duration: const Duration(milliseconds: 1000),
     );
-    _progressAnimation = Tween<double>(
+
+    // XP counter animation
+    _xpAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    // Coin counter animation
+    _coinAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    // Accuracy progress animation
+    _accuracyAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+
+    // Celebration animation
+    _celebrationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
+
+    _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 0.64, // 64% progress
+      end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeInOut,
+      parent: _mainAnimationController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     ));
-    _progressController.forward();
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _mainAnimationController,
+      curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+    ));
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _mainAnimationController,
+      curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
+    ));
+
+    _xpCountAnimation = IntTween(
+      begin: 0,
+      end: widget.xpEarned,
+    ).animate(CurvedAnimation(
+      parent: _xpAnimationController,
+      curve: Curves.easeOutBack,
+    ));
+
+    _coinCountAnimation = IntTween(
+      begin: 0,
+      end: widget.coinsEarned,
+    ).animate(CurvedAnimation(
+      parent: _coinAnimationController,
+      curve: Curves.bounceOut,
+    ));
+
+    _accuracyProgressAnimation = Tween<double>(
+      begin: 0.0,
+      end: widget.accuracy / 100,
+    ).animate(CurvedAnimation(
+      parent: _accuracyAnimationController,
+      curve: Curves.easeOutCubic,
+    ));
+
+    _celebrationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _celebrationController,
+      curve: Curves.elasticOut,
+    ));
+  }
+
+  void _startAnimations() {
+    _mainAnimationController.forward();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _xpAnimationController.forward();
+    });
+
+    Future.delayed(const Duration(milliseconds: 700), () {
+      _coinAnimationController.forward();
+    });
+
+    Future.delayed(const Duration(milliseconds: 900), () {
+      _accuracyAnimationController.forward();
+    });
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _celebrationController.forward();
+    });
   }
 
   @override
   void dispose() {
-    _progressController.dispose();
+    _mainAnimationController.dispose();
+    _xpAnimationController.dispose();
+    _coinAnimationController.dispose();
+    _accuracyAnimationController.dispose();
+    _celebrationController.dispose();
     super.dispose();
+  }
+
+  String get _performanceMessage {
+    if (widget.accuracy >= 90) return "Excellent work! 🎉";
+    if (widget.accuracy >= 80) return "Great job! 👏";
+    if (widget.accuracy >= 70) return "Good effort! 👍";
+    if (widget.accuracy >= 60) return "Keep practicing! 💪";
+    return "Don't give up! 📚";
+  }
+
+  Color get _performanceColor {
+    if (widget.accuracy >= 90) return Colors.green;
+    if (widget.accuracy >= 80) return Colors.blue;
+    if (widget.accuracy >= 70) return Colors.orange;
+    return Colors.red;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A), // Dark background
+      backgroundColor: const Color(0xFF1a1a1a),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Main Card
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 30),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2D2D2D), // Dark card background
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        offset: const Offset(0, 4),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+        child: AnimatedBuilder(
+          animation: _mainAnimationController,
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        // Achievement Icon
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: const Color(0xFF3F51B5).withOpacity(0.2),
-                              border: Border.all(
-                                color: const Color(0xFF3F51B5),
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.emoji_events,
-                              size: 50,
-                              color: Color(0xFF3F51B5),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 60),
-
-                        // Congratulation Text
-                        Text(
-                          'Well done, Kanhaiya King!',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'You did it! You finished your first Portuguese lesson. How great does it feel?',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[400],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        _buildHeader(),
                         const SizedBox(height: 24),
-
-                        // Stats Container
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF4A148C),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              children: [
-                                // Stats Header
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Steps',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.calendar_today,
-                                          size: 14,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          '07:27 - 01 Jan',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-
-                                // Steps Count and Circle
-                                Row(
-                                  children: [
-                                    const Text(
-                                      '2987',
-                                      style: TextStyle(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Expanded(
-                                      child: Text(
-                                        'Steps',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xFFE1BEE7),
-                                        ),
-                                      ),
-                                    ),
-                                    // Animated Progress Circle
-                                    AnimatedBuilder(
-                                      animation: _progressAnimation,
-                                      builder: (context, child) {
-                                        return SizedBox(
-                                          width: 60,
-                                          height: 60,
-                                          child: Stack(
-                                            alignment: Alignment.center,
-                                            children: [
-                                              Container(
-                                                width: 60,
-                                                height: 60,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(30),
-                                                  color: Colors.white.withOpacity(0.2),
-                                                ),
-                                              ),
-                                              CustomPaint(
-                                                size: const Size(60, 60),
-                                                painter: CircleProgressPainter(
-                                                  progress: _progressAnimation.value,
-                                                ),
-                                              ),
-                                              Container(
-                                                width: 48,
-                                                height: 48,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(24),
-                                                  color: const Color(0xFF4A148C),
-                                                ),
-                                                child: const Center(
-                                                  child: Text(
-                                                    '64',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                // Calories and Distance
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        padding: const EdgeInsets.all(12),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Calories',
-                                              style: const TextStyle(
-                                                color: Color(0xFFE1BEE7),
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.local_fire_department,
-                                                  size: 18,
-                                                  color: Color(0xFFFF7043),
-                                                ),
-                                                const SizedBox(width: 6),
-                                                const Text(
-                                                  '1056',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  'Kcal',
-                                                  style: const TextStyle(
-                                                    color: Color(0xFFE1BEE7),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        padding: const EdgeInsets.all(12),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Running',
-                                              style: const TextStyle(
-                                                color: Color(0xFFE1BEE7),
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.directions_run,
-                                                  size: 18,
-                                                  color: Color(0xFF2196F3),
-                                                ),
-                                                const SizedBox(width: 6),
-                                                const Text(
-                                                  '2.6',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  'km',
-                                                  style: const TextStyle(
-                                                    color: Color(0xFFE1BEE7),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        _buildResultHeader(),
+                        const SizedBox(height: 32),
+                        _buildStatsCards(),
+                        const SizedBox(height: 24),
+                        _buildAccuracySection(),
+                        const SizedBox(height: 32),
+                        _buildPerformanceMessage(),
+                        const Spacer(),
+                        _buildActionButtons(),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
                 ),
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-              // Next Button
-              const SizedBox(height: 40),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 60,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle next button press
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4A148C),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    elevation: 8,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Next',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(
-                        Icons.arrow_forward,
-                        size: 29,
-                        color: Colors.white,
-                      ),
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(
+            Icons.close,
+            color: Colors.white,
+            size: 24,
+          ),
+        ),
+        const Text(
+          'Quiz Results',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.share,
+            color: Colors.white,
+            size: 24,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultHeader() {
+    return AnimatedBuilder(
+      animation: _celebrationController,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: 1.0 + (_celebrationAnimation.value * 0.1),
+          child: Column(
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [
+                      _performanceColor.withOpacity(0.3),
+                      _performanceColor.withOpacity(0.1),
+                      Colors.transparent,
                     ],
                   ),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  widget.accuracy >= 80 ? Icons.celebration : Icons.emoji_events,
+                  size: 80,
+                  color: _performanceColor,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+              Text(
+                'Quiz Completed!',
+                style: TextStyle(
+                  color: _performanceColor,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${widget.correctAnswers}/${widget.totalQuestions} Questions Correct',
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatsCards() {
+    return Row(
+      children: [
+        Expanded(child: _buildXpCard()),
+        const SizedBox(width: 16),
+        Expanded(child: _buildCoinsCard()),
+        const SizedBox(width: 16),
+        Expanded(child: _buildTimeCard()),
+      ],
+    );
+  }
+
+  Widget _buildXpCard() {
+    return AnimatedBuilder(
+      animation: _xpCountAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.military_tech,
+                color: Colors.white,
+                size: 28,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '+${_xpCountAnimation.value}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                'XP',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCoinsCard() {
+    return AnimatedBuilder(
+      animation: _coinCountAnimation,
+      builder: (context, child) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFf59e0b), Color(0xFFef4444)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.monetization_on,
+                color: Colors.white,
+                size: 28,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '+${_coinCountAnimation.value}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                'Coins',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTimeCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF10b981), Color(0xFF059669)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.timer,
+            color: Colors.white,
+            size: 28,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${widget.timeTaken.inMinutes}:${(widget.timeTaken.inSeconds % 60).toString().padLeft(2, '0')}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Text(
+            'Time',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccuracySection() {
+    return AnimatedBuilder(
+      animation: _accuracyProgressAnimation,
+      builder: (context, child) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2a2a2a),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _performanceColor.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Accuracy',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${(widget.accuracy * _accuracyProgressAnimation.value).round()}%',
+                    style: TextStyle(
+                      color: _performanceColor,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: _accuracyProgressAnimation.value,
+                  backgroundColor: Colors.grey[700],
+                  valueColor: AlwaysStoppedAnimation<Color>(_performanceColor),
+                  minHeight: 8,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPerformanceMessage() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      decoration: BoxDecoration(
+        color: _performanceColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _performanceColor.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.lightbulb_outline,
+            color: _performanceColor,
+            size: 24,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              _performanceMessage,
+              style: TextStyle(
+                color: _performanceColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              widget.onContinue?.call();
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _performanceColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 8,
+              shadowColor: _performanceColor.withOpacity(0.3),
+            ),
+            child: const Text(
+              'Continue Learning',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              widget.onReview?.call();
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.white,
+              side: const BorderSide(color: Colors.grey, width: 1),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            child: const Text(
+              'Review Answers',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Demo app to showcase the Result widget
+class ResultDemo extends StatelessWidget {
+  const ResultDemo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Quiz Result Demo',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF1a1a1a),
+      ),
+      home: Scaffold(
+        backgroundColor: const Color(0xFF1a1a1a),
+        appBar: AppBar(
+          title: const Text('Quiz App - Result Demo'),
+          backgroundColor: const Color(0xFF2a2a2a),
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Quiz Results Demo',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Result(
+                        xpEarned: 180,
+                        coinsEarned: 35,
+                        timeTaken: Duration(minutes: 3, seconds: 42),
+                        accuracy: 92.5,
+                        correctAnswers: 9,
+                        totalQuestions: 10,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.celebration),
+                label: const Text('Excellent Result (92%)'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Result(
+                        xpEarned: 120,
+                        coinsEarned: 18,
+                        timeTaken: Duration(minutes: 4, seconds: 15),
+                        accuracy: 65.0,
+                        correctAnswers: 6,
+                        totalQuestions: 10,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.emoji_events),
+                label: const Text('Average Result (65%)'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class CircleProgressPainter extends CustomPainter {
-  final double progress;
-
-  CircleProgressPainter({required this.progress});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint backgroundPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke;
-
-    final Paint progressPaint = Paint()
-      ..color = const Color(0xFF7E57C2)
-      ..strokeWidth = 4
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - 4) / 2;
-
-    // Draw background circle
-    canvas.drawCircle(center, radius, backgroundPaint);
-
-    // Draw progress arc
-    final sweepAngle = 2 * math.pi * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2, // Start from top
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(CircleProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress;
   }
 }

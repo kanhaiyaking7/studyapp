@@ -1,15 +1,17 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/features/auth/provider/User_provider.dart';
 
-class ProfileEdit extends StatefulWidget {
+class ProfileEdit extends ConsumerStatefulWidget {
   const ProfileEdit({Key? key}) : super(key: key);
 
   @override
-  State<ProfileEdit> createState() => _ProfileEditState();
+  ConsumerState<ProfileEdit> createState() => _ProfileEditState();
 }
 
-class _ProfileEditState extends State<ProfileEdit> {
+class _ProfileEditState extends ConsumerState<ProfileEdit> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -29,11 +31,12 @@ class _ProfileEditState extends State<ProfileEdit> {
   void initState() {
     super.initState();
     // Initialize with existing data
-    _nameController.text = 'Alex Mitchell';
-    _ageController.text = '28';
-    _emailController.text = 'alex.mitchell@email.com';
-    _phoneController.text = '+1 (555) 123-4567';
-    _bioController.text = 'Software developer passionate about creating amazing user experiences.';
+    final user = ref.read(UserDetails);
+    _nameController.text = user.username;
+    _ageController.text = user.age.toString();
+    _emailController.text = user.email;
+    _phoneController.text = user.phone_Number.toString();
+    _bioController.text = user.bio;
   }
 
   @override
@@ -49,6 +52,14 @@ class _ProfileEditState extends State<ProfileEdit> {
     _phoneFocus.dispose();
     _bioFocus.dispose();
     super.dispose();
+  }
+
+  void _onsubmit(){
+    final complete_user = ref.read(UserDetails.notifier).complete_user_detils(
+        _nameController.text, int.parse(_ageController.text), _emailController.text,
+       int.parse( _phoneController.text), _bioController.text);
+    _showSnackBar('Profile updated successfully!');
+    Navigator.of(context).pop();
   }
 
   @override
@@ -401,21 +412,29 @@ class _ProfileEditState extends State<ProfileEdit> {
           ),
           elevation: 0,
         ),
-        child: _isLoading
-            ? const SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            color: Colors.white,
-            strokeWidth: 2,
-          ),
+
+        child:
+        GestureDetector(
+          onTap: (){
+            _saveProfile();
+          },
+          child: _isLoading
+              ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          ):
+          const Text(
+              'Save Changes',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
         )
-            : const Text(
-          'Save Changes',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+
         ),
       ),
     );
@@ -479,8 +498,9 @@ class _ProfileEditState extends State<ProfileEdit> {
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() => _isLoading = false);
+    _onsubmit();
 
-    _showSnackBar('Profile updated successfully!');
+    // _showSnackBar('Profile updated successfully!');
   }
 
   void _resetForm() {

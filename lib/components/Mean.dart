@@ -2,33 +2,50 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-class Mean extends StatefulWidget {
+class Mean extends ConsumerStatefulWidget{
 
   final Function onNext;
+  // final String data;
   const Mean({
     Key? key,
-    required this.onNext
+    required this.onNext,
+    // required this.data
 
   }) : super(key: key);
 
   @override
-  _MeanState createState() => _MeanState();
+
+  ConsumerState<Mean> createState() => _MeanState();
 }
 
-class _MeanState extends State<Mean> {
+class _MeanState extends ConsumerState<Mean> {
 
   var english_word = "Ability";
+  var info ;
+
+  // List<Map<String,dynamic>> Unique_word = [
+  //   {
+  //     'english_word':"Ability",
+  //     'hindi_meaning':'्षमता',
+  //     'some_sentence':['उसकी ability (योग्यता) कमाल की है।',
+  //       'गणित में मेरी ability (क्षमता) बढ़ रही है।',
+  //     'हर किसी में कोई न कोई ability (काबिलियत) होती है।']
+  //   }
+  // ];
+ var Unique_word  ;
 
   FlutterTts flutterTts  = FlutterTts();
 
   Future _speak() async {
 
     await flutterTts.setLanguage("en");
-    await flutterTts.setPitch(5);
-    await flutterTts.speak(english_word);
+    await flutterTts.setPitch(1.5);
+    await flutterTts.speak(Unique_word[0]['new_word']);
   }
 
   @override
@@ -36,6 +53,12 @@ class _MeanState extends State<Mean> {
     // TODO: implement initState
     super.initState();
     _speak();
+   final data =  ref.read(Path_data).data;
+    info = data;
+
+    var extract_data = info['Learn_newword'];
+
+    Unique_word = extract_data;
   }
 
 
@@ -43,6 +66,8 @@ class _MeanState extends State<Mean> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+
+
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -190,7 +215,7 @@ class _MeanState extends State<Mean> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Ability',
+                    Unique_word[0]['new_word'],
                     style: TextStyle(
                       fontSize: 28,
                       color: Color(0xFF4A5568),
@@ -200,7 +225,7 @@ class _MeanState extends State<Mean> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'क्षमता',
+                    Unique_word[0]['hindi_mean'],
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 17,
@@ -234,11 +259,12 @@ class _MeanState extends State<Mean> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSentenceItem('⚫उसकी ability (योग्यता) कमाल की है।'),
+              _buildSentenceItem(Unique_word[0]['Sentence'][0]),
               SizedBox(height: 15),
-              _buildSentenceItem('⚫ गणित में मेरी ability (क्षमता) बढ़ रही है।'),
-              SizedBox(height: 15),
-              _buildSentenceItem('⚫ हर किसी में कोई न कोई ability (काबिलियत) होती है।'),
+              _buildSentenceItem(Unique_word[0]['Sentence'][1]),
+              // SizedBox(height: 15),
+              //
+              // _buildSentenceItem(Unique_word[0]['Sentence'][2]),
             ],
           ),
         ],
@@ -247,14 +273,18 @@ class _MeanState extends State<Mean> {
   }
 
   Widget _buildSentenceItem(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w200,
-        color: Colors.white,
-      ),
+    return Row(
+      children: [
+        Text("⚫"),
+    Text(
+    text, style: TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w200,
+    color: Colors.white,),
+    )
+      ],
     );
+
   }
 
   Widget _buildNextButton() {

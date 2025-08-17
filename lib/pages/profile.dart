@@ -1,18 +1,32 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Setting/SettingUi.dart';
+import 'package:hi/features/auth/provider/User_provider.dart';
 import 'package:hi/pages/helpprofile.dart';
 
 final avatoroo = 'assets/images/avator.png';
 
-class Profile extends StatefulWidget {
+class Profile extends ConsumerStatefulWidget {
   const Profile({Key? key}) : super(key: key);
 
   @override
-  State<Profile> createState() => _ProfileState();
+  ConsumerState<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends ConsumerState<Profile> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+
+  final user_name = "";
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,14 +84,18 @@ class _ProfileState extends State<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Alex Mitchell',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Consumer(builder: (context,ref,chld){
+                  final user_name = ref.watch(UserDetails).username;
+                  return  Text(
+                    user_name,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                }),
+
                 const SizedBox(height: 4),
                 Row(
                   children: [

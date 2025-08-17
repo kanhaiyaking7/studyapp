@@ -1,231 +1,204 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Providers/path_provier/Current_Level.dart';
+import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:hi/Service/Path_data.dart';
 import 'package:hi/components/Done.dart';
+import 'package:hi/components/Result.dart';
 
-// Sample images - In Flutter you would use asset paths
-// You'll need to add these images to your pubspec.yaml assets section
-const String volcanoImage = 'assets/images/volcano.webp';
-const String allstoneImage = 'assets/images/student.png';
-const String riverImage = 'assets/river.png';
+const String study_child = 'assets/images/children_study.png';
 
-class Poth extends StatefulWidget {
-  const Poth({Key? key}) : super(key: key);
+class PathScreen extends ConsumerStatefulWidget {
+  const PathScreen({Key? key}) : super(key: key);
 
   @override
-  State<Poth> createState() => _PothState();
+  ConsumerState<PathScreen> createState() => _PathScreenState();
 }
 
-class _PothState extends State<Poth> {
-  // User level (equivalent to the React Native code's user object)
-  final int userLevel = 6;
+class _PathScreenState extends ConsumerState<PathScreen> {
 
-  // Layer data (equivalent to the 'layer' array in the original code)
-  final List<Map<String, dynamic>> layer = [
-    {
-      'num': 0,
-      'image': false,
-      'first': {
-        'Heading': 'Unit 1 | Topic 1',
-        'sub_heading': "Medium Level",
-        'backgroundColor': const Color(0xFFFFB22C),
-        'logo': 'flag',
-      }
-    },
-    {
-      'num': 2,
-      'first': {
-        'name': "is/am/are",
-        'logo': 'numeric',
-        'counting': 1
-      },
-      'second': {
-        'name': "was/ware",
-        'logo': 'microchip',
-        'counting': 2
-      }
-    },
-    {
-      'num': 1,
-      'image': false,
-      'first': {
-        'name': "has/have",
-        'logo': 'lock',
-        'counting': 3
-      }
-    },
-    {
-      'num': 1,
-      'image': true,
-      'image_name': allstoneImage,
-      'image_direction': "left",
-      'first': {
-        'name': "has/have",
-        'logo': 'hand-wave',
-        'counting': 4
-      }
-    },
-    {
-      'num': 1,
-      'image': false,
-      'first': {
-        'name': "or/with",
-        'logo': 'lock',
-        'counting': 5
-      }
-    },
-    {
-      'num': 0,
-      'image': false,
-      'first': {
-        'Heading': 'Unit 2 | Topic 2',
-        'sub_heading': "Medium Level",
-        'backgroundColor': const Color(0xFFFE7743),
-        'logo': 'flag',
-      }
-    },
-    {
-      'num': 1,
-      'image': true,
-      'image_name': volcanoImage,
-      'image_direction': "right",
-      'first': {
-        'name': "has/have",
-        'logo': 'flag',
-        'counting': 6
-      }
-    },
-    {
-      'num': 1,
-      'image': false,
-      'first': {
-        'name': "has/have",
-        'logo': 'flag',
-        'counting': 7
-      }
-    },
-    {
-      'num': 1,
-      'image': true,
-      'image_name': allstoneImage,
-      'image_direction': "left",
-      'first': {
-        'name': "has/have",
-        'logo': 'flag',
-        'counting': 8
-      }
-    },
-    {
-      'num': 1,
-      'image': false,
-      'first': {
-        'name': "or/with",
-        'logo': 'flag',
-        'counting': 9,
-      }
-    },
+
+  final All_path_data _all_path_data = All_path_data();// Number of completed levels
+
+
+  final List<Topic> topics = [
+
+    Topic(
+        Unit_name: 'Unit1 | Topic 1',
+        topic: 'Basic Rules',
+        Background_color: Colors.green,
+        lessons: [
+          LessonData(
+            title: 'Vocabulary',
+            subtitle: 'शब्दावली',
+            icon: Icons.book,
+            Level:1,
+
+          ),
+          LessonData(
+            title: 'Read with me',
+            subtitle: '',
+            icon: Icons.person,
+            Level:2,
+
+          ),
+          LessonData(
+            title: 'Grammar',
+            subtitle: 'व्याकरण',
+            icon: Icons.article,
+            Level:3,
+
+          ),
+          LessonData(
+            title: 'Listening',
+            subtitle: 'सुनना',
+            icon: Icons.headphones,
+            Level:4,
+
+          ),
+
+
+        ]
+    ),
+    Topic(
+        Unit_name: 'Unit 1 | Topic 2',
+        topic: 'Writing Skills',
+        Background_color: Colors.orange,
+        lessons: [
+          LessonData(
+            title: 'Speaking',
+            subtitle: 'बोलना',
+            icon: Icons.mic,
+            Level:5,
+
+          ),
+
+          LessonData(
+            title: 'Writing',
+            subtitle: 'लिखना',
+            icon: Icons.edit,
+            Level:6,
+
+          ),
+          LessonData(
+            title: 'Pronunciation',
+            subtitle: 'उच्चारण',
+            icon: Icons.record_voice_over,
+            Level:7,
+
+          ),
+          LessonData(
+            title: 'Conversation',
+            subtitle: 'बातचीत',
+            icon: Icons.chat,
+            Level:8,
+
+          ),
+          LessonData(
+            title: 'Reading Practice',
+            subtitle: 'पढ़ने का अभ्यास',
+            icon: Icons.chrome_reader_mode,
+            Level:9,
+
+          ),
+          LessonData(
+            title: 'Final Assessment',
+            subtitle: 'अंतिम मूल्यांकन',
+            icon: Icons.assignment_turned_in,
+            Level:10,
+
+          ),
+
+        ]
+    )
   ];
 
-  void checkOnPress(int levelNumber) {
-    print('Level pressed: $levelNumber');
-    // Navigate to test loop - Flutter navigation
-    // Navigator.of(context).push(
-    //     MaterialPageRoute(builder: (context) =>Match()));
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
-  // Get icon based on logo string
-  Widget getIcon(String logo, {double size = 26, Color color = Colors.purple}) {
-    switch (logo) {
-      case 'flag':
-        return Icon(Icons.flag, size: size, color: const Color(0xFF5C6BC0));
-      case 'numeric':
-        return Icon(Icons.filter_1, size: size, color: const Color(0xFF7E57C2)); // Using filter_1 as numeric substitute
-      case 'microchip':
-        return Icon(Icons.memory, size: size, color: Colors.black); // Using memory as microchip substitute
-      case 'lock':
-        return Icon(Icons.lock, size: size, color: Colors.black);
-      case 'hand-wave':
-        return Icon(Icons.waving_hand, size: size, color: const Color(0xFF7E57C2)); // Using waving_hand substitute
-      default:
-        return Icon(Icons.circle, size: size, color: Colors.purple);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    int completedLevels = ref.watch(Current_Level);
+
 
     return Scaffold(
-      backgroundColor: const Color(0xFF222831),
+      backgroundColor: const Color(0xFF2D2D2D),
       body: SafeArea(
         child: Column(
           children: [
-            // Header section
+            // Header
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.05,
-                vertical: screenHeight * 0.015,
-              ),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: Colors.black, width: 1),
-                ),
-              ),
+              padding: const EdgeInsets.all(5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Refer button
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context) =>  Pro() ));
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.03,
-                        vertical: screenHeight * 0.008,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFEBEE),
-                        borderRadius: BorderRadius.circular(screenWidth * 0.05),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Refer a friend',
-                            style: TextStyle(
-                              color: const Color(0xFFFF5252),
-                              fontWeight: FontWeight.w600,
-                              fontSize: screenWidth * 0.035,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Coin container
                   Row(
                     children: [
-                      Container(
-                        width: screenWidth * 0.06,
-                        height: screenWidth * 0.06,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF9C4),
-                          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '🔥',
-                            style: TextStyle(fontSize: screenWidth * 0.03),
-                          ),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      //   decoration: BoxDecoration(
+                      //     color: const Color(0xFF4A4A4A),
+                      //     borderRadius: BorderRadius.circular(6),
+                      //   ),
+                      //   child: Row(
+                      //     children: [
+                      //       const Text(
+                      //         'हि',
+                      //         style: TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 14,
+                      //           fontWeight: FontWeight.bold,
+                      //         ),
+                      //       ),
+                      //       const SizedBox(width: 4),
+                      //       const Icon(
+                      //         Icons.keyboard_arrow_down,
+                      //         color: Colors.white,
+                      //         size: 16,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 20),
+                      const Text(
+                        'Courses',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 26,
                         ),
                       ),
-                      SizedBox(width: screenWidth * 0.01),
-                      Text(
-                        '100',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: screenWidth * 0.04,
-                          color: const Color(0xFFFFFDF6),
+                    ],
+                  ),
+                  Row(
+                    children: [
+
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFD700),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.local_fire_department,
+                              color: Colors.black,
+                              size: 16,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              '12',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -233,132 +206,87 @@ class _PothState extends State<Poth> {
                 ],
               ),
             ),
-            // Scrollable content
+
+            // Module Header
+            // Container(
+            //   width: double.infinity,
+            //   margin: const EdgeInsets.symmetric(horizontal: 10),
+            //   padding: const EdgeInsets.all(12),
+            //   decoration: BoxDecoration(
+            //     color: const Color(0xFFE97434),
+            //     borderRadius: BorderRadius.circular(16),
+            //   ),
+            //   child:  Column(
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            //     children: [
+            //
+            //               Text(
+            //                 'UNIT 1 | TOPIC 1',
+            //                 style: TextStyle(
+            //                   color: Colors.white70,
+            //                   fontSize: 20,
+            //                   fontWeight: FontWeight.bold,
+            //                 ),
+            //               ),
+            //               SizedBox(height: 4),
+            //               Text(
+            //                 'Basic Rules',
+            //   // 'MODULE 1 | TOPIC 1',
+            //                 style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontSize: 16,
+            //                   fontWeight: FontWeight.bold,
+            //                 ),
+            //               ),
+            //
+            //
+            //       // SizedBox(height: 4),
+            //       // Text(
+            //       //   'रोज की अंग्रेजी',
+            //       //   style: TextStyle(
+            //       //     color: Colors.white70,
+            //       //     fontSize: 14,
+            //       //   ),
+            //       // ),
+            //     ],
+            //   ),
+            // ),
+
+            // const SizedBox(height: 30),
+            //
+            // // Daily English Title
+            // const Text(
+            //   'Daily English',
+            //   style: TextStyle(
+            //     color: Colors.grey,
+            //     fontSize: 18,
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
+
+            const SizedBox(height: 30),
+
+            // Lessons Path
             Expanded(
               child: SingleChildScrollView(
-                child: Center(
-                  child: SizedBox(
-                    width: screenWidth,
-                    child: Column(
-                      children: List.generate(layer.length, (index) {
-                        final item = layer[index];
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(
+                    children: [
+                    for (var topic in topics) ...[
+                  _buildTopicHeader(topic),
+                const SizedBox(height: 10),
+                for (var lesson in topic.lessons)
+            _buildLessonItem(lesson,completedLevels),
+            const SizedBox(height: 20),
+          ]
 
-                        // Unit Banner (num: 0)
-                        if (item['num'] == 0) {
-                          return Container(
-                            width: screenWidth * 0.9,
-                            height: 80,
-                            margin: const EdgeInsets.only(top: 20, bottom: 30),
-                            decoration: BoxDecoration(
-                              color: item['first']['backgroundColor'],
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  right: 16,
-                                  child: SizedBox(
-                                    width: 69,
-                                    height: 49,
-                                    child: getIcon(item['first']['logo'], size: 46),
-                                  ),
-                                ),
-                                Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        item['first']['Heading'],
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        item['first']['sub_heading'],
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
 
-                        // Two modules in a row (num: 2)
-                        if (item['num'] == 2) {
-                          return Container(
-                            width: screenWidth,
-                            margin: const EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                // First module
-                                buildModuleItem(item['first'], screenWidth),
-                                // Second module
-                                buildModuleItem(item['second'], screenWidth),
-                              ],
-                            ),
-                          );
-                        }
 
-                        // Single module (num: 1, no image)
-                        if (item['num'] == 1 && item['image'] == false) {
-                          return Center(
-                            child: buildModuleItem(item['first'], screenWidth),
-                          );
-                        }
+                    // for (int i = 0; i < lessons.length; i++)
+                    //   _buildLessonItem(lessons[i], i),
+                  ],
 
-                        // Single module with image (num: 1, with right image)
-                        if (item['num'] == 1 && item['image'] == true && item['image_direction'] == "right") {
-                          return Container(
-                            width: screenWidth * 0.9,
-                            margin: const EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                buildModuleItem(item['first'], screenWidth),
-                                SizedBox(width: 80),
-                                Image.asset(
-                                  item['image_name'],
-                                  width: 90,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        // Single module with image (num: 1, with left image)
-                        if (item['num'] == 1 && item['image'] == true && item['image_direction'] == "left") {
-                          return Container(
-                            width: screenWidth * 0.9,
-                            margin: const EdgeInsets.only(bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Image.asset(
-                                  item['image_name'],
-                                  width: 90,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                ),
-                                SizedBox(width: 80),
-                                buildModuleItem(item['first'], screenWidth),
-                              ],
-                            ),
-                          );
-                        }
-
-                        // Fallback empty container if none of the conditions match
-                        return Container();
-                      }),
-                    ),
-                  ),
-                ),
+                )
               ),
             ),
           ],
@@ -367,83 +295,385 @@ class _PothState extends State<Poth> {
     );
   }
 
-  // Module Circle Widget (equivalent to ModuleCircle component in React Native)
-  Widget buildModuleCircle(Map<String, dynamic> moduleData) {
-    final int counting = moduleData['counting'];
-    final bool isEnabled = userLevel >= counting;
 
+  Widget _buildTopicHeader(Topic topic) {
     return Container(
-      width: 80,
-      height: 80,
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isEnabled ? const Color(0xFFEDE7F6) : const Color(0xFF948979),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: const Color(0xFF9575CD), width: 2),
-        boxShadow: isEnabled
-            ? [
-          BoxShadow(
-            color: const Color(0xFFF5C45E).withOpacity(0.5),
-            spreadRadius: 4,
-            blurRadius: 6,
-          )
-        ]
-            : null,
+        color: topic.Background_color,
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Center(
-        child: getIcon(moduleData['logo']),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            topic.Unit_name ,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            topic.topic,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Module Item Widget (module icon + text + badge)
-  Widget buildModuleItem(Map<String, dynamic> moduleData, double screenWidth) {
-    return GestureDetector(
-      onTap: () => checkOnPress(moduleData['counting']),
-      child: Container(
-        width: screenWidth * 0.45,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildModuleCircle(moduleData),
-                const SizedBox(height: 8),
-                Text(
-                  moduleData['name'] ?? 'Speak(mic)',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
+  Widget _buildLessonItem(LessonData lesson,completedLevels) {
+
+    return  Column(
+      children: [
+        GestureDetector(
+          onTap: (){
+           _showLessonDialog(lesson,completedLevels);
+          },
+          child:     Row(
+            children: [
+              // Left side - Circle with icon
+              Container(
+                width: 80, // Increase width to accommodate the border
+                height: 80, // Increase height to accommodate the border
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.grey, // Choose your border color
+                    width: 3.0, // Adjust the border thickness as needed
                   ),
                 ),
-              ],
-            ),
-            Positioned(
-              right: 40,
-              top: 0,
-              child: Container(
-                width: 22,
-                height: 22,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF7E57C2),
-                  borderRadius: BorderRadius.circular(11),
-                ),
-                child: Center(
-                  child: Text(
-                    moduleData['counting'].toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                alignment: Alignment.center,
+                child:
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: lesson.Level < completedLevels ? Colors.greenAccent
+                        : lesson.Level == completedLevels
+                        ? const Color(0xFFE97434)
+                        : const Color(0xFF4A4A4A),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        lesson.icon,
+                        color: Colors.black,
+                        size: 25,
+                      ),
+                      // if (lesson.isCompleted)
+                      //   Positioned(
+                      //     bottom: 5,
+                      //     right: 5,
+                      //     child: Container(
+                      //       width: 20,
+                      //       height: 20,
+                      //       decoration: const BoxDecoration(
+                      //         shape: BoxShape.circle,
+                      //         color: Color(0xFF4CAF50),
+                      //       ),
+                      //       child: const Icon(
+                      //         Icons.check,
+                      //         color: Colors.white,
+                      //         size: 12,
+                      //       ),
+                      //     ),
+                      //   ),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(width: 20),
+
+              // Right side - Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          lesson.title,
+                          style:  TextStyle(
+                            color:  lesson.Level < completedLevels ? Colors.white
+                                : lesson.Level == completedLevels
+                                ? Colors.redAccent
+                                : const Color(0xFF4A4A4A),
+
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+
+
+                        Icon(
+                            lesson.Level < completedLevels ? Icons.check_circle : Icons.cloud_download,
+                            color: lesson.Level < completedLevels ? Colors.green : Colors.grey,
+                            size: 24),
+                      ],
+                    ),
+
+                    if (lesson.subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        lesson.subtitle,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+
+                    ],
+                    // if (lesson.hasStartButton) ...[
+                    //   const SizedBox(height: 12),
+                    //   ElevatedButton(
+                    //     onPressed: () {
+                    //       // Handle start button tap
+                    //       ScaffoldMessenger.of(context).showSnackBar(
+                    //         const SnackBar(
+                    //           content: Text('Starting lesson...'),
+                    //           backgroundColor: Color(0xFFE97434),
+                    //         ),
+                    //       );
+                    //     },
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: const Color(0xFFE97434),
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 24,
+                    //         vertical: 8,
+                    //       ),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(20),
+                    //       ),
+                    //     ),
+                    //     child: const Text(
+                    //       'START HERE',
+                    //       style: TextStyle(
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: 12,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ],
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+
+        const SizedBox(height: 10),
+
+        // Connecting line
+
+          Container(
+            margin: const EdgeInsets.only(right:290),
+            child: Container(
+              width: 8,
+              height: 20,
+              color: const Color(0xFF4A4A4A),
+            ),
+          ),
+
+        const SizedBox(height: 10),
+      ],
     );
   }
+
+  void _showLessonDialog(LessonData lesson,completedLevels) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: Colors.blueAccent.withOpacity(0.90),
+          // decoration:BoxDecoration(
+          //     border: Border.all(color: Colors.white)
+          // ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Main curved container
+              Padding(
+                padding: const EdgeInsets.all(28),
+
+                child: Column(
+
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    // Header row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Left side - Icon and label
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.school_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                             Text(
+                              'Practice',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Right side - Duration badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Text(
+                            '2 MIN',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Main title
+                     Text(
+                      lesson.title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Subtitle/Description
+                    const Text(
+                      'Discover how to greet people Learn',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 36),
+
+                    // Action button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed:() async {
+                             final data = await  _all_path_data.get_data(completedLevels);
+                             ref.read(Path_data.notifier).update_data(data, completedLevels+1);
+
+                             Navigator.pushReplacement(context,
+                                 MaterialPageRoute(builder: (_)=> Result()));
+
+                          // Navigator.push(context, MaterialPageRoute(builder:
+                          //     (context)=>Pro(data:data)));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF2563eb),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 8,
+                          shadowColor: Colors.black.withOpacity(0.2),
+                        ),
+                        child: const Text(
+                          "Let's go",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Positioned lesson icon "pointing out"
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }
+
+class LessonData {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+   final  int Level;
+
+
+  LessonData({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.Level,
+
+  });
+}
+
+class Topic{
+  final String Unit_name;
+  final String topic;
+  final Color Background_color;
+  final List<LessonData> lessons;
+
+  Topic({required this.Unit_name, required this.topic,required this.Background_color ,required this.lessons});
+}
+
+
+
+

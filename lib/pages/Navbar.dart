@@ -23,7 +23,7 @@ class _BottomNavState extends State<BottomNav> {
 
   late Home HomePage;
   late Scoreboard order;
-  late Poth path;
+  late PathScreen path;
   late Profile profilePage;
 
   int currentTabIndex = 0;
@@ -32,7 +32,7 @@ class _BottomNavState extends State<BottomNav> {
   void initState(){
     HomePage = Home();
     order =Scoreboard();
-  path = Poth();
+  path = PathScreen();
     profilePage = Profile();
 
     pages = [HomePage,path, order ,profilePage];

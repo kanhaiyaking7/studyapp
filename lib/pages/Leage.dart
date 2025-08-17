@@ -14,8 +14,79 @@ class Scoreboard extends StatefulWidget {
 class _ScoreboardState extends State<Scoreboard> {
   String selectedCategory = 'Workout';
 
+  final List<Map<String,dynamic>> Players = [
+    {
+        'name': 'Regina Fly',
+        'streak': '23m',
+        'streakType': 'Workout streak',
+        'position': 1,
+        'avatar': Icons.person,
+        'isCurrentUser': false,
+    },
+    {
+      'name': 'Regina Fly',
+      'streak': '13m',
+      'streakType': 'Workout streak',
+      'position': 2,
+      'avatar': Icons.person,
+      'isCurrentUser': false,
+    },
+    {
+      'name': 'Regina Fly',
+      'streak': '03m',
+      'streakType': 'Workout streak',
+      'position': 3,
+      'avatar': Icons.person,
+      'isCurrentUser': false,
+    },
+    {
+      'name': 'Regina Fly',
+      'streak': '33m',
+      'streakType': 'Workout streak',
+      'position': 4,
+      'avatar': Icons.person,
+      'isCurrentUser': false,
+    },
+    {
+      'name': 'Regina Fly',
+      'streak': '45m',
+      'streakType': 'Workout streak',
+      'position': 5,
+      'avatar': Icons.woman,
+      'isCurrentUser': false,
+    },
+
+
+  ];
+final List<Map<String,dynamic>> Winners = [
+  {
+      'name': 'King',
+      'position': 1,
+      'avatara': Icons.person,
+      'badgeColor': Colors.amber,
+      'isWinner': true,
+      'topp': 0,
+  },
+  {
+    'name': 'Alex\nFreedman',
+    'position': 2,
+    'avatara': Icons.person,
+    'badgeColor': Colors.grey,
+    'isWinner': false,
+    'topp': 40,
+  },
+  {
+    'name': 'Matthew\nApeter',
+    'position': 3,
+    'avatara': Icons.person,
+    'badgeColor': Colors.brown,
+    'isWinner': false,
+    'topp': 50,
+  },
+];
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
       appBar: AppBar(
@@ -54,38 +125,53 @@ class _ScoreboardState extends State<Scoreboard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // 2nd Place
+                //     ListView.builder(
+                //       itemCount: Winners.length,
+                //         itemBuilder: (context,index){
+                //         return  _buildPodiumUser(
+                //           name: Winners[index]['name'],
+                //           position: Winners[index]['position'],
+                //           avatara: Winners[index]['avatara'],
+                //           badgeColor: Winners[index]['badgeColor'],
+                //           isWinner: Winners[index]['isWinner'],
+                //           topp: Winners[index]['topp'],
+                //         );
+                //
+                //
+                //     })
+                //     2nd Place
                     _buildPodiumUser(
-                      name: 'Alex\nFreedman',
-                      position: 2,
-                      avatara: Icons.person,
-                      badgeColor: Colors.grey,
-                      isWinner: false,
-                      topp: 40,
+                      name: Winners[1]['name'],
+                       position: Winners[1]['position'],
+                      avatara: Winners[1]['avatara'],
+                      badgeColor: Winners[1]['badgeColor'],
+                     isWinner: Winners[1]['isWinner'],
+                      topp: Winners[1]['topp'],
 
-                    ),
+                     ),
                     const SizedBox(width: 15),
                     // 1st Place (Winner)
                     _buildPodiumUser(
-                      name: 'Regina Fly',
-                      position: 1,
-                      avatara: Icons.person,
-                      badgeColor: Colors.amber,
-                      isWinner: true,
-                      topp: 0
+                      name: Winners[0]['name'],
+                      position: Winners[0]['position'],
+                      avatara: Winners[0]['avatara'],
+                      badgeColor: Winners[0]['badgeColor'],
+                      isWinner: Winners[0]['isWinner'],
+                      topp: Winners[0]['topp']
                     ),
                     const SizedBox(width: 15),
                     // 3rd Place
                     _buildPodiumUser(
-                      name: 'Matthew\nApeter',
-                      position: 3,
-                      avatara: Icons.person,
-                      badgeColor: Colors.brown,
-                      isWinner: false,
-                      topp: 50
+                      name: Winners[2]['name'],
+                      position: Winners[2]['position'],
+                      avatara:Winners[2]['avatara'],
+                      badgeColor: Winners[2]['badgeColor'],
+                      isWinner: Winners[2]['isWinner'],
+                      topp: Winners[2]['topp']
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 20),
                 // Podium Base
                 Row(
@@ -317,63 +403,42 @@ class _ScoreboardState extends State<Scoreboard> {
 
                   // User List
                   Expanded(
-                    child: ListView(
-                      children: [
-                        _buildUserTile(
-                          name: 'Regina Fly',
-                          streak: '2,3m',
-                          streakType: 'Workout streak',
-                          position: 1,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
+                    child:
+                        ListView.builder(
+                           itemCount: Players.length,
+                            itemBuilder: (context,index){
+                             return _buildUserTile(
+                                 name: Players[index]['name'],
+                                 streak: Players[index]['streak'],
+                                 streakType: Players[index]['streakType'],
+                                 position: Players[index]['position'],
+                                 avatar: Players[index]['avatar'],
+                                 isCurrentUser: Players[index]['isCurrentUser']
+                             );
+                            }
+
                         ),
-                        _buildUserTile(
-                          name: 'Alex Freedman',
-                          streak: '1,8m',
-                          streakType: 'Workout streak',
-                          position: 2,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
-                        ),
-                        _buildUserTile(
-                          name: 'Alex Freedman',
-                          streak: '1,8m',
-                          streakType: 'Workout streak',
-                          position: 2,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
-                        ),  _buildUserTile(
-                          name: 'Alex Freedman',
-                          streak: '1,8m',
-                          streakType: 'Workout streak',
-                          position: 2,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
-                        ),  _buildUserTile(
-                          name: 'Alex Freedman',
-                          streak: '1,8m',
-                          streakType: 'Workout streak',
-                          position: 2,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
-                        ),  _buildUserTile(
-                          name: 'Alex Freedman',
-                          streak: '1,8m',
-                          streakType: 'Workout streak',
-                          position: 2,
-                          avatar: Icons.person,
-                          isCurrentUser: false,
-                        ),
-                        _buildUserTile(
-                          name: '(You) Emma Richa...',
-                          streak: '987k',
-                          streakType: 'Workout streak',
-                          position: 32,
-                          avatar: Icons.person,
-                          isCurrentUser: true,
-                        ),
-                      ],
-                    ),
+                    // ListView(
+                    //   children: [
+                    //     _buildUserTile(
+                    //       name: 'Regina Fly',
+                    //       streak: '2,3m',
+                    //       streakType: 'Workout streak',
+                    //       position: 1,
+                    //       avatar: Icons.person,
+                    //       isCurrentUser: false,
+                    //     ),
+                    //
+                    //     _buildUserTile(
+                    //       name: '(You) Emma Richa...',
+                    //       streak: '987k',
+                    //       streakType: 'Workout streak',
+                    //       position: 32,
+                    //       avatar: Icons.person,
+                    //       isCurrentUser: true,
+                    //     ),
+                    //   ],
+                    // ),
                   ),
                 ],
               ),
@@ -417,25 +482,25 @@ class _ScoreboardState extends State<Scoreboard> {
                 fit: BoxFit.cover,
               )
             ),
-            if (isWinner)
-              Positioned(
-                top: -10,
-                left: 0,
-                right: 0,
-                child: Container(
-                  width: 50,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Colors.amber,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.emoji_events,
-                    color: Colors.orange,
-                    size: 18,
-                  ),
-                ),
-              ),
+            // if (isWinner)
+            //   Positioned(
+            //     top: -10,
+            //     left: 0,
+            //     right: 0,
+            //     child: Container(
+            //       width: 50,
+            //       height: 40,
+            //       decoration: const BoxDecoration(
+            //         color: Colors.amber,
+            //         shape: BoxShape.circle,
+            //       ),
+            //       child: const Icon(
+            //         Icons.emoji_events,
+            //         color: Colors.orange,
+            //         size: 18,
+            //       ),
+            //     ),
+            //   ),
             if (!isWinner)
               Positioned(
                 bottom: -5,

@@ -2,25 +2,39 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-class SimpleSpeak extends StatefulWidget {
+class SimpleSpeak extends ConsumerStatefulWidget {
   final Function onNext;
-  const SimpleSpeak({required this.onNext});
+  // final String data;
+  const SimpleSpeak({required this.onNext,
+    // required this.data
+  });
   @override
-  _SimpleSpeakState createState() => _SimpleSpeakState();
+  ConsumerState<SimpleSpeak> createState() => _SimpleSpeakState();
 }
 
-class _SimpleSpeakState extends State<SimpleSpeak>
+class _SimpleSpeakState extends ConsumerState<SimpleSpeak>
     with TickerProviderStateMixin {
 
   final SpeechToText _speechToText = SpeechToText();
+  var info;
+  var unique_sentence;
 
+  late final List<Map<String,dynamic>> Unique_word = [
+    {
+      'english_word':unique_sentence[1]['english_word'],
+      'hindi_meaning':unique_sentence[1]['hindi_mean'],
 
-  var english_word = 'how are you';
-  var hindi_word =  'आप कैसे हैं?';
+    }
+  ];
+
+  late var english_word = Unique_word[0]['english_word'];
+  late var hindi_word =  Unique_word[0]['hindi_meaning'];
   var speaking_word = "";
   bool _speechEnabled = false;
   String _wordsSpoken = " ";
@@ -49,6 +63,7 @@ class _SimpleSpeakState extends State<SimpleSpeak>
     _glowController = AnimationController(
       duration: Duration(milliseconds: 1500),
       vsync: this,
+
     );
 
     // Create color animation
@@ -61,6 +76,11 @@ class _SimpleSpeakState extends State<SimpleSpeak>
     _glowController.repeat(reverse: true);
     initSpeech();
     _speak();
+
+    final data =  ref.read(Path_data).data;
+    info = data;
+    var extract_data = info['Speaking_word'];
+    unique_sentence= extract_data;
   }
 
   void initSpeech() async {
@@ -88,7 +108,7 @@ class _SimpleSpeakState extends State<SimpleSpeak>
     // });
 
 
-    if(storage == english_word){
+    if(storage == english_word.toLowerCase()){
       print("perfect");
       widget.onNext();
       // QuickAlert.show(
@@ -375,7 +395,7 @@ class _SimpleSpeakState extends State<SimpleSpeak>
           animation: _textColorAnimation,
           builder: (context, child) {
             return Text(
-              'How are you?',
+              english_word,
               style: TextStyle(
                 color: _textColorAnimation.value,
                 fontSize: 16,

@@ -2,29 +2,50 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-class Sentence extends StatefulWidget {
+class Sentence extends ConsumerStatefulWidget{
   final Function onNext;
- const Sentence({required this.onNext});
+  // final String data;
+ const Sentence({required this.onNext,
+   // required this.data
+ });
   @override
-  _SentenceState createState() => _SentenceState();
+  ConsumerState<Sentence> createState() => _SentenceState();
 }
 
-class _SentenceState extends State<Sentence> {
+class _SentenceState extends ConsumerState<Sentence> {
   String? selectedAnswer;
-  final List<String> options = ['go', 'went', 'going', 'gone'];
+  var info;
+  var unique_sentence;
 
-  var english_word = "I go to the park";
+ late List<Map<dynamic,dynamic>> Sentence_quiz = [
+    {
+      'hindi_question': unique_sentence[0]['hind_Sentence'],
+      'options':[unique_sentence[0]['english_sentence'][0].toString()  ,
+        unique_sentence[0]['english_sentence'][1].toString(),
+        unique_sentence[0]['english_sentence'][2].toString()],
+      // ['This book is good.','I like food.',
+      //   'He is very cute.','I bought a new toy.'],
+      'correct_ans':unique_sentence[0]['corr_sentence']
+
+    },
+  ];
+
+  // final List<String> options = ['go', 'went', 'going', 'gone'];
+
+  // var english_word = "I go to the park";
 
   FlutterTts flutterTts  = FlutterTts();
 
   Future _speak() async {
 
-    await flutterTts.setLanguage("en");
-    await flutterTts.setPitch(5);
-    await flutterTts.speak(english_word);
+    await flutterTts.setLanguage("hi");
+    await flutterTts.setPitch(1);
+    await flutterTts.speak(Sentence_quiz[0]['hindi_question']);
   }
 
   @override
@@ -32,6 +53,12 @@ class _SentenceState extends State<Sentence> {
     // TODO: implement initState
     super.initState();
     _speak();
+
+    final data =  ref.read(Path_data).data;
+    info = data;
+    var extract_data = info['choose_correct_sentence'];
+    unique_sentence= extract_data;
+
   }
 
   @override
@@ -145,7 +172,7 @@ class _SentenceState extends State<Sentence> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Choose the correct form of the verb in brackets',
+          'Choose the correct Hindi sentence meaning in brackets',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -153,36 +180,46 @@ class _SentenceState extends State<Sentence> {
           ),
         ),
         SizedBox(height: 20),
-        RichText(
-          text: TextSpan(
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              height: 1.5,
-            ),
-            children: [
-              TextSpan(text: 'I '),
-              TextSpan(
-                text: '______',
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white,
-                  decorationThickness: 2,
-                ),
-              ),
-              TextSpan(text: ' (go) to the park eve...'),
-            ],
+        Text(
+          Sentence_quiz[0]['hindi_question'],
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
         ),
+
+        // RichText(
+        //   text: TextSpan(
+        //     style: TextStyle(
+        //       color: Colors.white,
+        //       fontSize: 16,
+        //       height: 1.5,
+        //     ),
+        //     children: [
+        //       TextSpan(text: 'I '),
+        //       TextSpan(
+        //         text: '______',
+        //         style: TextStyle(
+        //           decoration: TextDecoration.underline,
+        //           decorationColor: Colors.white,
+        //           decorationThickness: 2,
+        //         ),
+        //       ),
+        //       TextSpan(text: ' (go) to the park eve...'),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
 
   Widget _buildAnswerOptions() {
+   final List<String> option =  Sentence_quiz[0]['options'];
     return Column(
-      children: options.map((option) {
+      children: option.map((option) {
         final isSelected = selectedAnswer == option;
-        final isCorrect = option == 'go'; // Assuming 'go' is the correct answer
+        final isCorrect = option == Sentence_quiz[0]['correct_ans']; // Assuming 'go' is the correct answer
 
         return Container(
           width: double.infinity,
@@ -317,7 +354,8 @@ class _SentenceState extends State<Sentence> {
             ],
           ),
           content: Text(
-            'Think about the present tense form of the verb that matches with "I".',
+            "Sorry ,I can't help you",
+            // 'Think about the present tense form of the verb that matches with "I".',
             style: TextStyle(color: Colors.white70),
           ),
           actions: [
@@ -335,7 +373,7 @@ class _SentenceState extends State<Sentence> {
   }
 
   void _checkAnswer() {
-    final isCorrect = selectedAnswer == 'go';
+    final isCorrect = selectedAnswer == Sentence_quiz[0]['correct_ans'];
     if(isCorrect){
       widget.onNext();
     }
@@ -363,7 +401,7 @@ class _SentenceState extends State<Sentence> {
             content: Text(
               isCorrect
                   ? 'Well done! You selected the correct answer.'
-                  : 'The correct answer is "go". Try again next time!',
+                  : 'The correct answer is ${Sentence_quiz[0]['correct_ans']}. Try again next time!',
               style: TextStyle(color: Colors.white70),
             ),
             actions: [
@@ -399,4 +437,6 @@ class _SentenceState extends State<Sentence> {
 
 
   }
+
+
 }

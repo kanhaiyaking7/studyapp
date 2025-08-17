@@ -1,46 +1,47 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sound_library/sound_library.dart';
 import 'package:audioplayers/audioplayers.dart';
 
-class YesNoQuiz extends StatefulWidget {
+class YesNoQuiz extends ConsumerStatefulWidget {
   // final Function(int) setLayer;
   // final int layer;
   final Function onNext;
+  // final String data;
   const YesNoQuiz({
-    Key? key,
+
     // required this.setLayer,
     // required this.layer,
     required this.onNext,
-  }) : super(key: key);
+    // required this.data
+  });
 
   @override
-  State<YesNoQuiz> createState() => _YesNoQuizState();
+  ConsumerState<YesNoQuiz> createState() => _YesNoQuizState();
 }
 
-class _YesNoQuizState extends State<YesNoQuiz> {
-  final List<Map<String, String>> user = [
-    {"question": "I am a boy", "situation": "yes"}
-  ];
+class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
 
   String? butt;
+  var info;
+  var unique_sentence;
 
+  late List<Map<String,dynamic>> user = [
+    {
+      "question": unique_sentence[0]['english_word'],
+      'hindi_mean':unique_sentence[0]['hindi_mean'],
+      'option':unique_sentence[0]['opt'],
+      'correct_ans':unique_sentence[0]['corr_ans']
 
+    }
+  ];
 
-  var english_word = "Do you want to play?";
-  var hindi_word = "क्या तुम खेलना चाहते हो?";
-  var speaking_word = "";
-  bool _speechEnabled = false;
-  String _wordsSpoken = " ";
-  double _confidenceLevel = 0;
-
-  bool _sucessfull = false;
-
-  String dd = "done";
 
   FlutterTts flutterTts  = FlutterTts();
 
@@ -48,7 +49,7 @@ class _YesNoQuizState extends State<YesNoQuiz> {
 
     await flutterTts.setLanguage("hi");
     await flutterTts.setPitch(5);
-    await flutterTts.speak(hindi_word);
+    await flutterTts.speak(user[0]['hindi_mean']);
   }
 
   @override
@@ -56,47 +57,56 @@ class _YesNoQuizState extends State<YesNoQuiz> {
     // TODO: implement initState
     super.initState();
  _speak();
+    final data =  ref.read(Path_data).data;
+    info = data;
+    var extract_data = info['complete_eng_sentence'];
+    unique_sentence= extract_data;
   }
 
-  void handleYes() {
+
+  // void handleNo() async{
+  //  await SoundPlayer.play(Sounds.click, volume: 0.9, position: Duration(milliseconds: 500));
+  //   print(user[0]["situation"] == "no");
+  //   print('User cancelled exit');
+  //   if (user[0]["situation"] == "no") {
+  //     // widget.setLayer(widget.layer + 1);
+  //     widget.onNext();
+  //   } else {
+  //     setState(() {
+  //       butt = "wrong";
+  //     });
+  //   }
+  // }
 
 
-    if (user[0]["situation"] == "yes") {
-      print(widget.onNext);
-      // setState(() {
-      //   butt = "Right";
-      // });
-      // widget.setLayer(widget.layer + 1);
-      widget.onNext();
-
-    } else {
-      setState(() {
-        butt = "wrong";
-      });
-    }
-  }
-
-  void handleNo() async{
-   await SoundPlayer.play(Sounds.click, volume: 0.9, position: Duration(milliseconds: 500));
-    print(user[0]["situation"] == "no");
-    print('User cancelled exit');
-    if (user[0]["situation"] == "no") {
-      // widget.setLayer(widget.layer + 1);
-      widget.onNext();
-    } else {
-      setState(() {
-        butt = "wrong";
-      });
-    }
-  }
-
-  void handleClose() {
-    print('User closed dialog');
-  }
   //
   void nextQuestion() {
     // widget.setLayer(widget.layer + 1);
     widget.onNext();
+  }
+
+
+  void left_are(){
+    if(user[0]['option'][0] == user[0]['correct_ans']){
+      widget.onNext();
+    }
+    else{
+      setState(() {
+        butt = "wrong";
+      });
+
+    }
+  }
+  void right_are(){
+    if(user[0]['option'][1] == user[0]['correct_ans']){
+      widget.onNext();
+    }
+    else{
+      setState(() {
+        butt = "wrong";
+      });
+
+    }
   }
 
   @override
@@ -213,17 +223,21 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                   vertical: 12,
                                   horizontal: 16,
                                 ),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFF6B47),
+                                decoration:  BoxDecoration(
+                                  // color: Color(0xFFFF6B47),
+                                  // color:  const Color(0xFFFFF8E1),
+                                  // color:  const Color(0xFFFFECB3),
+                                  color:  Colors.amber[200],
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(12),
                                     topRight: Radius.circular(12),
                                   ),
                                 ),
                                 child: const Text(
-                                  'Choose sentence is right',
+                                  // 'Choose sentence is right',
+                                  'Complete the Sentence',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -237,7 +251,7 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                        Text(
-                                       english_word,
+                                         user[0]['question'],
                                         style: TextStyle(
                                           fontSize: 28,
                                           color: Color(0xFF4A5568),
@@ -247,7 +261,7 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                       ),
                                       const SizedBox(height: 20),
                                        Text(
-                                        hindi_word,
+                                         user[0]['hindi_mean'],
                                         style: TextStyle(
                                           color: Colors.grey,
                                           fontSize: 17,
@@ -269,13 +283,14 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: handleYes,
-                                  // onTap:(){},
+                                  onTap: left_are,
+
                                   child: Container(
                                     height: 90,
                                     margin: const EdgeInsets.only(right: 8),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE74C3C),
+                                      // color: const Color(0xFF2ECC71),
+                                      border: Border.all(width: 2.0,color: Colors.yellow),
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
@@ -285,11 +300,11 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                         ),
                                       ],
                                     ),
-                                    child: const Center(
+                                    child:  Center(
                                       child: Text(
-                                        'Yes',
+                                        user[0]['option'][0],
                                         style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontSize: 42,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -300,13 +315,15 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: handleNo,
+                                  onTap: right_are,
                                   // onTap:(){},
                                   child: Container(
                                     height: 90,
                                     margin: const EdgeInsets.only(left: 8),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF2ECC71),
+                                      // color: const Color(0xFF2ECC71),
+                                      // color:  Colors.blueGrey[50],
+                                      border: Border.all(width: 2.0,color: Colors.yellow),
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
@@ -316,11 +333,11 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                         ),
                                       ],
                                     ),
-                                    child: const Center(
+                                    child:  Center(
                                       child: Text(
-                                        'No',
+                                        user[0]['option'][1],
                                         style: TextStyle(
-                                          color: Colors.black,
+                                          color: Colors.white,
                                           fontSize: 42,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -352,7 +369,7 @@ class _YesNoQuizState extends State<YesNoQuiz> {
                                   ),
                                 ),
                                 Text(
-                                  'Correct answer = ${user[0]["situation"]}',
+                                  'Correct answer = ${user[0]['correct_ans']}',
                                   style: const TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold,

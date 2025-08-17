@@ -4,8 +4,11 @@ class Front extends StatelessWidget {
 
 
   final VoidCallback onNext;
+  // final String data;
 
- Front({required this.onNext});
+ Front({required this.onNext,
+   // required this.data
+ });
 
   @override
   Widget build(BuildContext context) {
