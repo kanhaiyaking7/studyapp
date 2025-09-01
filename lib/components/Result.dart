@@ -1,7 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Providers/path_provier/Current_Level.dart';
+import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 
-class Result extends StatefulWidget {
+class Result extends ConsumerStatefulWidget {
   final int xpEarned;
   final int coinsEarned;
   final Duration timeTaken;
@@ -16,7 +19,7 @@ class Result extends StatefulWidget {
     Key? key,
     this.xpEarned = 150,
     this.coinsEarned = 25,
-    this.timeTaken = const Duration(minutes: 2, seconds: 35),
+    this.timeTaken = const Duration(minutes: 0, seconds: 35),
     this.accuracy = 85.0,
     this.correctAnswers = 8,
     this.totalQuestions = 10,
@@ -25,10 +28,10 @@ class Result extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<Result> createState() => _ResultState();
+  ConsumerState<Result> createState() => _ResultState();
 }
 
-class _ResultState extends State<Result> with TickerProviderStateMixin {
+class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
   late AnimationController _mainAnimationController;
   late AnimationController _xpAnimationController;
   late AnimationController _coinAnimationController;
@@ -159,6 +162,22 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
     });
   }
 
+  void next_lesson(){
+    ref.read(Current_Level.notifier).state++;
+    ref.read(UserProgress_Provider.notifier).user_Level();
+   final lev =  ref.read(UserProgress_Provider).Level;
+    ref.read(UserProgress_Provider.notifier).store_lessondata(lev, '50%', 10, 35);
+
+     ref.read(UserProgress_Provider.notifier).increase_score(5);
+
+
+     // ref.read(UserProgress_Provider.notifier).;
+
+
+     Navigator.pop(context);
+
+  }
+
   @override
   void dispose() {
     _mainAnimationController.dispose();
@@ -204,18 +223,18 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        _buildHeader(),
-                        const SizedBox(height: 24),
+                        // _buildHeader(),
+                        // const SizedBox(height: 24),
                         _buildResultHeader(),
                         const SizedBox(height: 32),
                         _buildStatsCards(),
-                        const SizedBox(height: 24),
-                        _buildAccuracySection(),
-                        const SizedBox(height: 32),
-                        _buildPerformanceMessage(),
+                        // const SizedBox(height: 24),
+                        // _buildAccuracySection(),
+                        // const SizedBox(height: 32),
+                        // _buildPerformanceMessage(),
                         const Spacer(),
                         _buildActionButtons(),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
@@ -281,10 +300,14 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
                   ),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  widget.accuracy >= 80 ? Icons.celebration : Icons.emoji_events,
-                  size: 80,
-                  color: _performanceColor,
+                child: Text(
+                  widget.accuracy >= 80 ?  '🎉': '👏',
+                  style: TextStyle(
+                    fontSize: 80,
+
+                  ),
+                  // size: 80,
+                  // color: _performanceColor,
                 ),
               ),
               const SizedBox(height: 16),
@@ -297,12 +320,14 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
                 ),
               ),
               const SizedBox(height: 8),
+
               Text(
-                '${widget.correctAnswers}/${widget.totalQuestions} Questions Correct',
+                // '${widget.correctAnswers}/${widget.totalQuestions} Questions Correct',
+                'Amazing!',
                 style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -331,17 +356,18 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: Colors.blue,
+            // gradient: const LinearGradient(
+            //   colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
+            //   begin: Alignment.topLeft,
+            //   end: Alignment.bottomRight,
+            // ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             children: [
               const Icon(
-                Icons.military_tech,
+                Icons.electric_bolt_outlined,
                 color: Colors.white,
                 size: 28,
               ),
@@ -386,13 +412,14 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
           child: Column(
             children: [
               const Icon(
-                Icons.monetization_on,
+                // Icons.monetization_on,
+                Icons.signal_cellular_alt_rounded,
                 color: Colors.white,
                 size: 28,
               ),
               const SizedBox(height: 8),
               Text(
-                '+${_coinCountAnimation.value}',
+                '${_coinCountAnimation.value}\%',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -400,7 +427,7 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
                 ),
               ),
               const Text(
-                'Coins',
+                'Accuracy',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
@@ -550,11 +577,13 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              widget.onContinue?.call();
-              Navigator.of(context).pop();
+              next_lesson();
+              // widget.onContinue?.call();
+              // Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: _performanceColor,
+              backgroundColor: Colors.orangeAccent,
+              // [Color(0xFFf59e0b),],
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -564,7 +593,7 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
               shadowColor: _performanceColor.withOpacity(0.3),
             ),
             child: const Text(
-              'Continue Learning',
+              'Start Next Lesson',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -572,30 +601,30 @@ class _ResultState extends State<Result> with TickerProviderStateMixin {
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {
-              widget.onReview?.call();
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              side: const BorderSide(color: Colors.grey, width: 1),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: const Text(
-              'Review Answers',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
+        // const SizedBox(height: 12),
+        // SizedBox(
+        //   width: double.infinity,
+        //   child: OutlinedButton(
+        //     onPressed: () {
+        //       widget.onReview?.call();
+        //     },
+        //     style: OutlinedButton.styleFrom(
+        //       foregroundColor: Colors.white,
+        //       side: const BorderSide(color: Colors.grey, width: 1),
+        //       padding: const EdgeInsets.symmetric(vertical: 16),
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(16),
+        //       ),
+        //     ),
+        //     child: const Text(
+        //       'Review Answers',
+        //       style: TextStyle(
+        //         fontSize: 16,
+        //         fontWeight: FontWeight.w600,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

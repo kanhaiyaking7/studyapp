@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class LanguageLearningScreen extends ConsumerStatefulWidget {
   final VoidCallback onNext;
@@ -145,6 +146,53 @@ class _LanguageLearningScreenState extends ConsumerState<LanguageLearningScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+            Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.close_sharp,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              Container(child:
+              new LinearPercentIndicator(
+                width: 250.0,
+                lineHeight: 8.0,
+                percent: 0.2,
+                backgroundColor: Colors.white,
+                progressColor: Colors.blue,
+                barRadius: Radius.circular(10.0),
+                animation: true,
+                animationDuration: 1000,
+                curve: Curves.easeInOut,
+                animateFromLastPercent: true,
+
+
+              ),
+              ),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.grid_view,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
               // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

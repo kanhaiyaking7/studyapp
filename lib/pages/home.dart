@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hi/Games/Dragpoint.dart';
 import 'package:hi/Games/Enrichment.dart';
 import 'package:hi/Games/ErrorHunt.dart';
+import 'package:hi/Games/GamesSection.dart';
 import 'package:hi/Reading/Bookstore.dart';
 import 'package:hi/Reading/Reading.dart';
 import 'package:hi/Role_ai/startpage.dart';
@@ -256,7 +258,7 @@ class _HomeState extends State<Home> {
                 const Color(0xFF7B68EE),
                 screenWidth,
                     () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ErrorHunt()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>GamesSection()));
                   // Navigate to pronunciation drills
                 },
               ),

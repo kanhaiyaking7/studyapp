@@ -2,6 +2,7 @@
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Speaking/ShowAnime.dart';
 import 'package:hi/Speaking/ShowVideo.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -109,6 +110,17 @@ class _VideoStudyState extends State<VideoStudy> {
     {'english': 'What time is it', 'hindi': 'समय क्या है?'},
   ];
 
+  final List UserSpeak = [
+    "Hello",
+    "I am here for a job interview"
+    "My name is Simon",
+    "Where is it",
+    "Got it. Thanks"
+    "Good morning",
+    "Nice to meet you, Sir I am Simson"
+
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,11 +128,7 @@ class _VideoStudyState extends State<VideoStudy> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              width: 400,
-                height: 250,
-              child:   VideoFormat(),
-            ),
+
             // Status bar info
 
             // Study content area
@@ -207,11 +215,12 @@ class _VideoStudyState extends State<VideoStudy> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      if (currentQuestionIndex > 0) {
-                                        setState(() {
-                                          currentQuestionIndex--;
-                                        });
-                                      }
+                                      // if (currentQuestionIndex > 0) {
+                                      //   setState(() {
+                                      //     currentQuestionIndex--;
+                                      //   });
+                                      // }
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>VideoCallScreen()));
                                     },
                                     child: Container(
                                       width: 40,

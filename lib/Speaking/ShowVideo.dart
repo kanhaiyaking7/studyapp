@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class VideoFormat extends StatefulWidget {
-  const VideoFormat({super.key});
+  final person_stop;
+  final  person_play;
+  const VideoFormat({super.key, required this.person_play, required this.person_stop});
+
   @override
   State<VideoFormat> createState() => _VideoFormatState();
 }
@@ -15,6 +18,7 @@ class _VideoFormatState extends State<VideoFormat> {
   final List<int> pauseTimes = [10, 15, 22];
   final Set<int> alreadyPaused = {};
 
+
   @override
   void initState() {
     final videoId = YoutubePlayer.convertUrlToId(videourl);
@@ -22,53 +26,46 @@ class _VideoFormatState extends State<VideoFormat> {
         initialVideoId: videoId!,
         flags: YoutubePlayerFlags(
             autoPlay:true,
-            hideControls: false,
+            hideControls: true,
             startAt: 05,
-            endAt: 025,
+            // endAt: 025,
             hideThumbnail: true,
             enableCaption: false,
-            controlsVisibleAtStart: true,
+            controlsVisibleAtStart: false,
             disableDragSeek: false,
-            useHybridComposition: false
+            useHybridComposition: true,
         ));
     // TODO: implement initState
     super.initState();
 
   }
 
-//  var  _atimer = Timer.periodic(Duration(seconds: 1), (timer) async {
-//   final position = await _controller.value.position;
-//   final seconds = position.inSeconds;
-//
-//   if (pauseTimes.contains(seconds) && !alreadyPaused.contains(seconds)) {
-//   alreadyPaused.add(seconds);
-//
-//   _controller.pause();
-//   print("Paused at $seconds seconds");
-//
-//   // Resume after 2 seconds
-//   Future.delayed(Duration(seconds: 2), () {
-//   _controller.play();
-//   print("Resumed at ${_controller.value.position.inSeconds} seconds");
-//   });
-//   }
-//   });
-// }
-//
-// @override
-// void dispose() {
-//   _controller.dispose();
-//   _timer.cancel();
-//   super.dispose();
-// }
+@override
+void dispose() {
+  _controller.dispose();
+  _timer.cancel();
+  super.dispose();
+}
+
 
   void stop(){
+
+    print("stopppppppppppppp");
     _controller.pause();
+    // _controller.value = 50 as YoutubePlayerValue;
+  }
+
+  void play(){
+    print("play++++++");
+    _controller.play();
   }
 
   @override
   Widget build(BuildContext context) {
+    widget.person_stop(stop);
+    widget.person_play(play);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child:   Expanded(
         flex: 2,
@@ -81,7 +78,7 @@ class _VideoFormatState extends State<VideoFormat> {
               Column(
                 children: [
                   YoutubePlayer(controller: _controller,
-                    showVideoProgressIndicator: true,
+                    showVideoProgressIndicator: false,
                     onReady: ()=>debugPrint("also print"),
                     bottomActions: [
                       CurrentPosition(),
@@ -90,17 +87,28 @@ class _VideoFormatState extends State<VideoFormat> {
                 ],
               ),
 
+
+
               Positioned(
-                bottom: 16,
+                bottom: 1,
                 right: 16,
+                top: 160,
                 child: Row(
                   children: [
+                    IconButton(onPressed: (){play();},
+                        icon: Icon(Icons.place,size: 30,)
+                    ),
+
                     Icon(Icons.play_arrow, color: Colors.white, size: 20),
                     const SizedBox(width: 4),
                     const Text(
                       'YouTube',
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
+                    const SizedBox(width: 14),
+                    IconButton(onPressed: (){stop();},
+                        icon: Icon(Icons.stop,size: 30,)
+                    )
                   ],
                 ),
               ),

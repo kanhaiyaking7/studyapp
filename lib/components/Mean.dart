@@ -95,7 +95,8 @@ class _MeanState extends ConsumerState<Mean> {
                       size: 24,
                     ),
                   ),
-                  Container(child:
+                  Container(
+                      child:
                   new LinearPercentIndicator(
                     width: 250.0,
                     lineHeight: 8.0,

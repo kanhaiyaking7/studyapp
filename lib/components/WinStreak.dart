@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:hi/components/Result.dart';
 
 class WinStreak extends StatefulWidget {
   final int currentStreak;
@@ -366,7 +367,8 @@ class _WinStreakState extends State<WinStreak>
       child: ElevatedButton(
         onPressed: () {
           widget.onContinue?.call();
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Result()));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.orange,

@@ -1,53 +1,117 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+// import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flick_video_player/flick_video_player.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/Aichat_provider/Aichat_provider.dart';
+import 'package:hi/Role_ai/Animation.dart';
+import 'package:hi/Role_ai/SpeakButt.dart';
+import 'package:hi/Role_ai/logic_ai.dart';
 import 'package:video_player/video_player.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-class AIVirtual extends StatefulWidget {
+class AIVirtual extends ConsumerStatefulWidget {
+  final result;
+  AIVirtual({required this.result});
   @override
-  _AIVirtualState createState() => _AIVirtualState();
+  ConsumerState<AIVirtual> createState() => _AIVirtualState();
 }
 
-class _AIVirtualState extends State<AIVirtual> {
+class _AIVirtualState extends ConsumerState<AIVirtual> {
   final TextEditingController _messageController = TextEditingController();
-  final SpeechToText _speechToText = SpeechToText();
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      text: "😊😊\nnice to know you~",
-      isUser: true,
-      timestamp: DateTime.now().subtract(Duration(minutes: 5)),
-    ),
-    ChatMessage(
-      text: "Sure~",
-      isUser: false,
-      timestamp: DateTime.now().subtract(Duration(minutes: 4)),
-    ),
-    ChatMessage(
-      text: "What's your name?",
-      isUser: true,
-      timestamp: DateTime.now().subtract(Duration(minutes: 3)),
-    ),
-    ChatMessage(
-      text: "Nice to meet you!",
-      isUser: false,
-      timestamp: DateTime.now().subtract(Duration(minutes: 2)),
-    ),
-    ChatMessage(
-      text: "Nice to meet you!",
-      isUser: false,
-      timestamp: DateTime.now().subtract(Duration(minutes: 2)),
-    ),
-    ChatMessage(
-      text: "Nice to meet you!",
-      isUser: false,
-      timestamp: DateTime.now().subtract(Duration(minutes: 2)),
-    ),
+  // final SpeechToText _speechToText = SpeechToText();
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _text = "";
+  bool TrigerError = false;
 
+  ScrollController _scrollController = ScrollController();
+
+
+  FlutterTts flutterTts  = FlutterTts();
+
+  // print(widget.result[0].output[0].hindiMean);
+  ////
+  late List josh = widget.result;
+  late List<dynamic> _messages = josh;
+  // [
+  //
+  //   ChatMessage(
+  //     text: "Hello! What's your name?",
+  //     isUser: false,
+  //   hindi_text: 'नमस्ते! आपका नाम क्या है?',
+  //      chat_no: 1
+  //   ),
+  //   ChatMessage(
+  //     text: "Hello! My name is Amit. And you?",
+  //     isUser: true,
+  //    hindi_text: 'नमस्ते! मेरा नाम अमित है। और आप?',
+  //     chat_no: 2
+  //   ),
+  //   ChatMessage(
+  //     text: "My name is Rakesh. It's nice to meet you.",
+  //     isUser: false,
+  //     hindi_text: 'मेरा नाम राकेश है। आपसे मिलकर अच्छा लगा।',
+  //     chat_no: 3
+  //
+  //   ),
+  //   // ChatMessage(
+  //   //   text: "It's nice to meet you too.",
+  //   //   isUser: true,
+  //   // hindi_text: 'मुझे भी आपसे मिलकर ख़ुशी हुई।',
+  //   //   chat_no: 4
+  //   // ),
+  //   ChatMessage(
+  //     text: "Hello. I am fine.",
+  //     isUser: true,
+  //    hindi_text: 'नमस्ते। मैं ठीक हूँ। टेबल खाली है क्या?',
+  //     chat_no: 4
+  //   ),
+  //   ChatMessage(
+  //       text: "Yes, of course. How many people are you?",
+  //       isUser: false,
+  //       hindi_text: 'मजी, बिलकुल। कितने लोग हैं आप?',
+  //     chat_no: 5
+  //
+  //   ),
+  //   ChatMessage(
+  //       text: "We are two people.",
+  //       isUser: true,
+  //       hindi_text: 'हम दो लोग हैं।',
+  //       chat_no: 6
+  //
+  //   ),
+  //   ChatMessage(
+  //       text: "Come this way, sir. This table will be perfect for you.",
+  //       isUser: false,
+  //       hindi_text: 'इधर आइये, सर। यह टेबल आपके लिए सही रहेगी।',
+  //       chat_no: 7
+  //
+  //   ),
+  //   ChatMessage(
+  //       text: "Yes, of course. How many people are you?",
+  //       isUser: true,
+  //       hindi_text: 'इधर आइये, सर। यह टेबल आपके लिए सही रहेगी|',
+  //       chat_no: 8
+  //
+  //   ),
+  //   ChatMessage(
+  //       text: "Thank you.",
+  //       isUser: false,
+  //       hindi_text: 'शुक्रिया।',
+  //       chat_no: 9
+  //
+  //   ),
+  //
+  // ];
+
+  late List message_data = [
+    _messages[0],
   ];
-  late FlickManager flickManager;
 
+  late FlickManager flickManager;
 
   var speaking_word = "";
 
@@ -56,9 +120,22 @@ class _AIVirtualState extends State<AIVirtual> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initSpeech();
-    flickManager = FlickManager(videoPlayerController: VideoPlayerController.asset('assets/video/avator_ai.mp4'));
 
+
+
+    // initSpeech();
+    _speech = stt.SpeechToText();
+    _speak();
+    flickManager = FlickManager(videoPlayerController:
+    VideoPlayerController.asset('assets/video/avator_ai.mp4'));
+
+  }
+
+  Future _speak() async {
+
+    await flutterTts.setLanguage("en");
+    await flutterTts.setPitch(1);
+    await flutterTts.speak(message_data.last.text);
   }
 
   @override
@@ -66,63 +143,229 @@ class _AIVirtualState extends State<AIVirtual> {
     // TODO: implement dispose
     super.dispose();
     flickManager.dispose();
+    // _stopListening();
+    _scrollController.dispose();
+
+
   }
 
-  void initSpeech() async {
-  var  _speechEnabled =  await _speechToText.initialize();
-
-
+  void re_run(query){
     setState(() {
-      _messages.add(
-        ChatMessage(
-        text: "😊😊hi",
-        isUser: true,
-        timestamp: DateTime.now().subtract(Duration(minutes: 5)),
-      ),
-      );
-
-
+      message_data.addAll(query);
+      _speak();
     });
   }
 
-  void _startListening() async{
- var wwe =   await _speechToText.listen(onResult: _onSpeechResult);
+  // void initSpeech() async {
+  // var  _speechEnabled =  await _speechToText.initialize();
+  //
+  //
+  //   setState(() {
+  //     _messages.add(
+  //       ChatMessage(
+  //       text: "😊😊hi",
+  //       isUser: true,
+  //       timestamp: DateTime.now().subtract(Duration(minutes: 5)),
+  //     ),
+  //     );
+  //
+  //
+  //   });
+  // }
 
-  }
+ //  void _startListening() async{
+ // var wwe =   await _speechToText.listen(onResult: _onSpeechResult),listenfor:Duration(se);
+ //
+ //  }
+  ///////////////////////////////////////////////
+//   Future<void> _startListening() async {
+//     bool available = await _speech.initialize(
+//       // It's generally better to handle errors and status changes, but don't stop the mic here
+//       // based on "notListening" or "done" if you expect a final result.
+//       onError: (error) {
+//         print("Speech error: $error");
+//       },
+//     );
+//
+//     if (available) {
+//       setState(() {
+//         _isListening = true;
+//         TrigerError = false;
+//       });
+//       _speech.listen(
+//         listenFor: const Duration(seconds: 30),
+//         pauseFor: Duration(seconds: 5),
+//         onResult: (result) {
+//           // This callback is where you get the recognized words.
+//           // It might be called multiple times with partial results.
+//           setState(() {
+//             _text = result.recognizedWords;
+//           });
+//
+//           // The key is to check if this is the final result.
+//           // Once the final result is in, you can process the text and stop listening.
+//           if (result.finalResult) {
+//             // This ensures you only process the complete, final sentence.
+//             _stopAndProcessText(result.recognizedWords);
+//           }
+//         },
+//       );
+//     }
+//   }
+//
+// // A new function to handle processing after the final result is in
+//   Future<void> _stopAndProcessText(String recognizedText) async {
+//     if (_isListening) {
+//       await _speech.stop();
+//       setState(() => _isListening = false);
+//
+//       if (recognizedText.isNotEmpty) {
+//         var changetext = recognizedText.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '');
+//         print(changetext);
+//
+//         var current_chat_no = message_data.length - 1;
+//         List logic = [
+//           _messages[current_chat_no + 1],
+//           _messages[current_chat_no + 2]
+//         ];
+//         print("++++++++++");
+//         var firchange = _messages[current_chat_no + 1]
+//             .text
+//             .toLowerCase()
+//             .replaceAll(RegExp(r'[^\w\s]'), '');
+//         print(firchange);
+//         print(firchange == changetext);
+//
+//         if (changetext == firchange) {
+//           setState(() {
+//             message_data.addAll(logic);
+//             _speak();
+//           });
+//         } else {
+//           print("@@@@@@");
+//           setState(() {
+//             TrigerError = true;
+//           });
+//         }
+//       }
+//     }
+//   }
+//
+//   Future<void> _stopListening() async {
+//     if (_isListening) {
+//       await _speech.stop();
+//       setState(() => _isListening = false);
+//     }
+//   }
+  ////////////////////////////////////////////
 
-  void _onSpeechResult(result){
-    // print(result.recognizedWords);
-    var storage = result.recognizedWords;
+////////////////real code
+  // Future<void> _startListening() async {
+  //   bool available = await _speech.initialize(
+  //     onStatus: (status) {
+  //       if (status == "done" || status == "notListening") {
+  //         // Mic stopped automatically when user stopped speaking
+  //
+  //         _stopListening();
+  //       }
+  //     },
+  //     onError: (error) {
+  //       print("Speech error: $error");
+  //     },
+  //   );
+  //
+  //   if (available) {
+  //     setState(
+  //           () =>( _isListening = true,
+  //           TrigerError = false)
+  //
+  //     );
+  //     _speech.listen(
+  //       listenFor: const Duration(seconds: 30),
+  //       pauseFor: Duration(seconds: 5),
+  //       onResult: (result) {
+  //         setState(() {
+  //           _text = result.recognizedWords;
+  //         });
+  //       },
+  //     );
+  //   };
+  // }
+  //
+  // Future<void> _stopListening() async {
+  //   if (_isListening) {
+  //     await _speech.stop();
+  //     setState(() => _isListening = false);
+  //
+  //     if (_text.isNotEmpty) {
+  // var changetext = _text.toLowerCase().replaceAll(new RegExp(r'[^\w\s]'), '');
+  //       print(changetext);
+  //
+  //       var current_chat_no = message_data.length - 1;//0
+  //       var data_chat_no  = _messages.length;//6
+  //       List logic = [_messages[current_chat_no + 1] , _messages[current_chat_no+ 2] ];
+  //       print("++++++++++");
+  //       var firchange = _messages[current_chat_no + 1].text.toLowerCase().replaceAll(new RegExp(r'[^\w\s]'), '');
+  //       print(firchange);
+  //
+  //       if(changetext == firchange){
+  //         setState(() {
+  //           message_data.addAll(logic);
+  //           _speak();
+  //
+  //         });
+  //       }
+  //       else{
+  //         print("@@@@@@");
+  //         setState(() {
+  //           TrigerError = true;
+  //         });
+  //       }
+  //
+  //
+  //
+  //       // _sendToServer(_text);
+  //     }
+  //   }
+  // }
+  ////end code
 
-
-    setState(() {
-      speaking_word = storage;
-    });
-    // setState(() {
-    //   _wordsSpoken = "${result.recognizedWords}";
-    //   _confidenceLevel = result.confidence;
-    // });
-
-
-
-  }
-
-  void _stopListening() async {
- var result =    await _speechToText.stop();
-
-
-    setState(() {
-      // dd="ho gay";
-
-    });
-  }
-
-
+ //  void _onSpeechResult(result){
+ //    // print(result.recognizedWords);
+ //    var storage = result.recognizedWords;
+ //
+ //
+ //    setState(() {
+ //      speaking_word = storage;
+ //    });
+ //    // setState(() {
+ //    //   _wordsSpoken = "${result.recognizedWords}";
+ //    //   _confidenceLevel = result.confidence;
+ //    // });
+ //
+ //
+ //
+ //  }
+ //
+ //  void _stopListening() async {
+ // var result =    await _speechToText.stop();
+ //
+ //
+ //    setState(() {
+ //      // dd="ho gay";
+ //
+ //    });
+ //  }
+ //
+ //
 
 
 
   @override
   Widget build(BuildContext context) {
+    // final data =  ref.watch(AiChat_provider);
+    // print(widget.result[0].output[0].hindiMean);
+    print("OOOOOOOOO");
     return Scaffold(
       backgroundColor: Color(0xFF1E1E1E),
       appBar: AppBar(
@@ -134,14 +377,15 @@ class _AIVirtualState extends State<AIVirtual> {
         ),
         title: Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Color(0xFF3D3D3D),
-              child: Icon(Icons.person, color: Colors.white70),
-            ),
-            SizedBox(width: 12),
+            // CircleAvatar(
+            //   radius: 20,
+            //   backgroundColor: Color(0xFF3D3D3D),
+            //   child: Icon(Icons.person, color: Colors.white70),
+            // ),
+            // SizedBox(width: 12),
             Expanded(
-              child: Column(
+              child:
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -152,182 +396,209 @@ class _AIVirtualState extends State<AIVirtual> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    "Online",
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 12,
-                    ),
-                  ),
+                  // Text(
+                  //   "Online",
+                  //   style: TextStyle(
+                  //     color: Colors.green,
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.videocam, color: Colors.white),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.call, color: Colors.white),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.videocam, color: Colors.white),
+          //   onPressed: () {},
+          // ),
+          // IconButton(
+          //   icon: Icon(Icons.call, color: Colors.white),
+          //   onPressed: () {},
+          // ),
           IconButton(
             icon: Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {},
           ),
         ],
       ),
-      body: Column(
+      body:
+
+      Column(
         children: [
           // Video Call Section
           Container(
             width: double.infinity,
-            height: 200,
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Color(0xFF2D2D2D),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Color(0xFF3D3D3D)),
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AspectRatio(aspectRatio: 16/7,child: FlickVideoPlayer(flickManager: flickManager),)
-                      // Icon(
-                      //   Icons.videocam_off,
-                      //   size: 48,
-                      //   color: Colors.white54,
-                      // ),
-                      // SizedBox(height: 8),
-                      // Text(
-                      //   "Video call not active",
-                      //   style: TextStyle(
-                      //     color: Colors.white54,
-                      //     fontSize: 16,
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      "Wanna Talk?",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            height: 190,
+            child:  Animat(),
           ),
 
+          // Container(
+          //   width: double.infinity,
+          //   height: 200,
+          //   // margin: EdgeInsets.all(16),
+          //   // decoration: BoxDecoration(
+          //   //   color: Color(0xFF2D2D2D),
+          //   //   borderRadius: BorderRadius.circular(12),
+          //   //   border: Border.all(color: Color(0xFF3D3D3D)),
+          //   // ),
+          //   child: Stack(
+          //     children: [
+          //       Center(
+          //         child: Column(
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             // AspectRatio(aspectRatio: 5/2,
+          //             //   child: FlickVideoPlayer(flickManager: flickManager),)
+          //
+          //             // Icon(
+          //             //   Icons.videocam_off,
+          //             //   size: 48,
+          //             //   color: Colors.white54,
+          //             // ),
+          //             // SizedBox(height: 8),
+          //             // Text(
+          //             //   "Video call not active",
+          //             //   style: TextStyle(
+          //             //     color: Colors.white54,
+          //             //     fontSize: 16,
+          //             //   ),
+          //             // ),
+          //           ],
+          //         ),
+          //       ),
+          //       // Positioned(
+          //       //   top: 12,
+          //       //   right: 12,
+          //       //   child: Container(
+          //       //     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //       //     decoration: BoxDecoration(
+          //       //       color: Colors.blue,
+          //       //       borderRadius: BorderRadius.circular(12),
+          //       //     ),
+          //       //     child: Text(
+          //       //       "Wanna Talk?",
+          //       //       style: TextStyle(
+          //       //         color: Colors.white,
+          //       //         fontSize: 12,
+          //       //         fontWeight: FontWeight.w500,
+          //       //       ),
+          //       //     ),
+          //       //   ),
+          //       // ),
+          //     ],
+          //   ),
+          // ),
+
           // Messages Section
+          // if(message_data.length > 2){
+          //
+          // }
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _messages.length,
+              itemCount: message_data.length,
               itemBuilder: (context, index) {
-                final message = _messages[index];
+                final message = message_data[index];
                 return _buildMessageBubble(message);
               },
             ),
           ),
 
+          TrigerError == true ? Text('Speak again',
+    style:TextStyle(color: Colors.red,fontSize: 20))
+        : Container(),
+
+
+
+
           // Voice Message Section
-          Container(
-            margin: EdgeInsets.all(12),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Color(0xFF2D2D2D),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                if(speaking_word.length > 2)
-                  Container(
-                    // width: double.infinity,
-                    // height: 70,
-                    // color: Colors.black,
-                    child:   Center(
-                      child: Container(
-                        // child: QuickAlertButtons(options: options)),
-                          child:   Text('${speaking_word}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),),
-                    ),
-
-
-                  ) ,
-
-                // SizedBox(height: 8),
-                // Text(
-                //   "\"Nice to meet you!\"",
-                //   style: TextStyle(
-                //     color: Colors.white54,
-                //     fontSize: 14,
-                //   ),
-                // ),
-
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    Container(
-                      width: 75,
-                      height: 76,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF9500),
-                        borderRadius: BorderRadius.circular(36),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.mic, color: Colors.white),
-                        onPressed: _speechToText.isListening ? _stopListening : _startListening,
-                        // onPressed: (){},
-                        iconSize: 38,
-                      ),
-                    ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.blue,
-                    //     shape: BoxShape.circle,
-                    //   ),
-                    //   child: IconButton(
-                    //     icon: Icon(Icons.mic, color: Colors.white, size: 28),
-                    //     onPressed: () {},
-                    //   ),
-                    // ),
-                    // IconButton(
-                    //   icon: Icon(Icons.send_rounded, color: Colors.white54),
-                    //   onPressed: () {},
-                    // ),
-                  ],
-                ),
-              ],
-            ),
+          // BottomVoiceUI(),
+          VoiceInputBottomUI(
+              messageList:_messages,
+              view_message :message_data,
+              change_run :re_run
           ),
+    //       Container(
+    //         margin: EdgeInsets.all(12),
+    //         padding: EdgeInsets.all(12),
+    //         decoration: BoxDecoration(
+    //           color: Color(0xFF2D2D2D),
+    //           borderRadius: BorderRadius.circular(12),
+    //         ),
+    //         child: Column(
+    //           children: [
+    //             // if(_text.length > 2)
+    //
+    //               Container(
+    //                 // width: double.infinity,
+    //                 // height: 70,
+    //                 // color: Colors.black,
+    //                 child:   Center(
+    //                   child: Container(
+    //                     // child: QuickAlertButtons(options: options)),
+    //                     //   child:   Text('${speaking_word}',
+    //                        child:  Column(children: [
+    //                          Text(_messages[message_data.length].text,
+    //                                   // " ${_text}",
+    //                               style: TextStyle(
+    //                                     color: Colors.white,
+    //                               fontSize: 20,
+    //                        fontWeight: FontWeight.w500,
+    //     ),
+    //   ),
+    //
+    // ],
+    // )
+    //                        ),
+    //
+    //                 ),
+    //
+    //
+    //               ) ,
+    //
+    //             // SizedBox(height: 8),
+    //             // Text(
+    //             //   "\"Nice to meet you!\"",
+    //             //   style: TextStyle(
+    //             //     color: Colors.white54,
+    //             //     fontSize: 14,
+    //             //   ),
+    //             // ),
+    //
+    //             SizedBox(height: 16),
+    //             Row(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: [
+    //
+    //                 Container(
+    //                   width: 75,
+    //                   height: 76,
+    //                   decoration: BoxDecoration(
+    //                     color: const Color(0xFFFF9500),
+    //                     borderRadius: BorderRadius.circular(36),
+    //                   ),
+    //                   child: IconButton(
+    //                     icon: const Icon(Icons.mic, color: Colors.white),
+    //                     onPressed:_isListening ? _stopListening : _startListening,
+    //                     // onPressed: (){},
+    //                     iconSize: 38,
+    //                   ),
+    //                 ),
+    //
+    //                 // IconButton(
+    //                 //   icon: Icon(Icons.send_rounded, color: Colors.white54),
+    //                 //   onPressed: () {},
+    //                 // ),
+    //               ],
+    //             ),
+    //           ],
+    //         ),
+    //       ),
 
-          // Message Input
+          ///Message Input
           // Container(
           //   padding: EdgeInsets.all(16),
           //   decoration: BoxDecoration(
@@ -371,20 +642,7 @@ class _AIVirtualState extends State<AIVirtual> {
           //         ),
           //         child: IconButton(
           //           icon: Icon(Icons.send, color: Colors.white),
-          //           onPressed: () {
-          //             if (_messageController.text.trim().isNotEmpty) {
-          //               setState(() {
-          //                 _messages.add(
-          //                   ChatMessage(
-          //                     text: _messageController.text.trim(),
-          //                     isUser: true,
-          //                     timestamp: DateTime.now(),
-          //                   ),
-          //                 );
-          //                 _messageController.clear();
-          //               });
-          //             }
-          //           },
+          //           onPressed: (){},
           //         ),
           //       ),
           //     ],
@@ -395,35 +653,55 @@ class _AIVirtualState extends State<AIVirtual> {
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message) {
+  Widget _buildMessageBubble( message) {
+    print(message.text);
+    print("qq");
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      // margin: EdgeInsets.only(bottom: 56),
+      margin: EdgeInsets.only(top:30),
+
       child: Row(
         mainAxisAlignment:
         message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!message.isUser) ...[
 
-            SizedBox(width: 8),
+            SizedBox(width: 1),
           ],
           Flexible(
             child: Container(
+              width: 200,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: message.isUser ? Colors.blue : Color(0xFF3D3D3D),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
+              child: Column(
+    children: [
+      Text(
+        message.text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+
+        ),
+      ),
+      Text(
+        message.hindi_text,
+        style: TextStyle(
+          // color: Colors.grey,
+          color: message.isUser ? Colors.black : Colors.grey,
+          fontSize: 12,
+
+        ),
+      ),
+    ],
+    )
+
             ),
           ),
           if (message.isUser) ...[
-            SizedBox(width: 8),
+            SizedBox(width: 1),
 
           ],
         ],
@@ -432,35 +710,19 @@ class _AIVirtualState extends State<AIVirtual> {
   }
 }
 
-class ChatMessage {
-  final String text;
-  final bool isUser;
-  final DateTime timestamp;
+// class ChatMessage {
+//   final String text;
+//   final String hindi_text;
+//   final bool isUser;
+//   final int chat_no;
+//
+//
+//   ChatMessage({
+//     required this.text,
+//     required this.hindi_text,
+//     required this.isUser,
+//     required this.chat_no
+//
+//   });
+// }
 
-  ChatMessage({
-    required this.text,
-    required this.isUser,
-    required this.timestamp,
-  });
-}
-
-// Example usage in main.dart:
-/*
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AI Virtual Chat',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: AIVirtual(),
-    );
-  }
-}
-*/

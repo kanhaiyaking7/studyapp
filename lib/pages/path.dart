@@ -1,10 +1,14 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Providers/path_provier/Current_Level.dart';
+import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:hi/Service/Path_data.dart';
 import 'package:hi/components/Done.dart';
+import 'package:hi/components/PrevResult.dart';
 import 'package:hi/components/Result.dart';
+import 'package:hi/components/WinStreak.dart';
 
 const String study_child = 'assets/images/children_study.png';
 
@@ -146,14 +150,15 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                       //   ),
                       //   child: Row(
                       //     children: [
-                      //       const Text(
-                      //         'हि',
-                      //         style: TextStyle(
-                      //           color: Colors.white,
-                      //           fontSize: 14,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
+                      //
+                      //       // const Text(
+                      //       //   'हि',
+                      //       //   style: TextStyle(
+                      //       //     color: Colors.white,
+                      //       //     fontSize: 14,
+                      //       //     fontWeight: FontWeight.bold,
+                      //       //   ),
+                      //       // ),
                       //       const SizedBox(width: 4),
                       //       const Icon(
                       //         Icons.keyboard_arrow_down,
@@ -163,12 +168,17 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                       //     ],
                       //   ),
                       // ),
-                      // const SizedBox(width: 20),
+                      Container(
+
+                        child:   CountryFlag.fromLanguageCode('hi',shape: Circle(),),
+                      ),
+                      const SizedBox(width: 20),
                       const Text(
-                        'Courses',
+                        'Lessons',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 26,
+                          fontWeight: FontWeight.bold
                         ),
                       ),
                     ],
@@ -178,26 +188,31 @@ class _PathScreenState extends ConsumerState<PathScreen> {
 
                       const SizedBox(width: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFD700),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Row(
+                        // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        // decoration: BoxDecoration(
+                        //   color: const Color(0xFFFFD700),
+                        //   borderRadius: BorderRadius.circular(8),
+                        // ),
+                        child:  Row(
                           children: [
                             Icon(
-                              Icons.local_fire_department,
-                              color: Colors.black,
-                              size: 16,
+                              Icons.currency_exchange,
+                              color: Colors.orangeAccent,
+                              size: 20,
                             ),
                             SizedBox(width: 4),
-                            Text(
-                              '12',
+                            Consumer(builder: (context,ref,child){
+                            final scroree =   ref.watch(UserProgress_Provider).score;
+                            return  Text(
+                              scroree.toString() ,
                               style: TextStyle(
-                                color: Colors.black,
+                                fontSize: 17,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
-                            ),
+                            );
+                            })
+
                           ],
                         ),
                       ),
@@ -606,11 +621,19 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed:() async {
-                             final data = await  _all_path_data.get_data(completedLevels);
-                             ref.read(Path_data.notifier).update_data(data, completedLevels+1);
+                          if(completedLevels <= lesson.Level){
+                            final data = await  _all_path_data.get_data(completedLevels);
+                            ref.read(Path_data.notifier).update_data(data, completedLevels+1);
 
-                             Navigator.pushReplacement(context,
-                                 MaterialPageRoute(builder: (_)=> Result()));
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (_)=> Pro()));
+
+                          }if(completedLevels > lesson.Level){
+                            final data =  ref.read(UserProgress_Provider).completed_level;
+                          var  info = data[lesson.Level - 1];
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (_)=> PrevResult( Lesson:lesson.Level,data:info)));
+                          }
 
                           // Navigator.push(context, MaterialPageRoute(builder:
                           //     (context)=>Pro(data:data)));

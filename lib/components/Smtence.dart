@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -378,6 +379,8 @@ class _SentenceState extends ConsumerState<Sentence> {
       widget.onNext();
     }
     else{
+
+      
       showDialog(
         context: context,
         builder: (BuildContext context) {

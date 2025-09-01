@@ -9,6 +9,7 @@ import 'package:hi/components/Mean.dart';
 import 'package:hi/components/Result.dart';
 import 'package:hi/components/Simplespeak.dart';
 import 'package:hi/components/Smtence.dart';
+import 'package:hi/components/WinStreak.dart';
 import 'package:hi/components/Yescom.dart';
 
 class Pro extends StatefulWidget {
@@ -30,16 +31,18 @@ class _ProState extends State<Pro> {
         (onNext) => Mean(onNext: onNext),
   // (onNext)=> Conversation(onNext: onNext),
         (onNext) => Sentence(onNext: onNext),
+
         (onNext) => YesNoQuiz(onNext: onNext),
+        (onNext) => Sentence(onNext: onNext),
         (onNext) => LanguageLearningScreen(onNext: onNext),
         (onNext) => Cardp(onNext: onNext),
         (onNext) => SimpleSpeak(onNext: onNext),
-
 
         //
   ];
 
   void goToNextLayer() {
+    print(layer);
 
     if (layer < steps.length - 1) {
       // print(widget.data);
@@ -51,6 +54,9 @@ class _ProState extends State<Pro> {
         layer++;
       });
 
+    }
+    if(layer == steps.length -1 ){
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=>WinStreak()));
     }
   }
 

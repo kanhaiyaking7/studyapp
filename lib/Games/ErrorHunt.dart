@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
+import 'package:hi/Games/Errorplay.dart';
+
 class ErrorHunt extends StatefulWidget {
   const ErrorHunt({Key? key}) : super(key: key);
 
@@ -18,8 +20,8 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
   int streak = 0;
   int currentQuestionIndex = 0;
   bool isGameStarted = false;
-  bool isTimedMode = false;
-  bool isStreakMode = false;
+  bool isTimedMode = true;
+  bool isStreakMode = true;
 
   // Timer
   Timer? gameTimer;
@@ -266,14 +268,14 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
           title: const Text('Timed Mode (60s)', style: TextStyle(color: Colors.white)),
           subtitle: const Text('Race against time!', style: TextStyle(color: Colors.grey)),
           value: isTimedMode,
-          onChanged: (value) => setState(() => isTimedMode = value),
+          onChanged: (value) => setState(() => isTimedMode = true),
           activeColor: Colors.blue,
         ),
         SwitchListTile(
           title: const Text('Streak Mode', style: TextStyle(color: Colors.white)),
           subtitle: const Text('Keep your streak alive!', style: TextStyle(color: Colors.grey)),
           value: isStreakMode,
-          onChanged: (value) => setState(() => isStreakMode = value),
+          onChanged: (value) => setState(() => isStreakMode = true),
           activeColor: Colors.purple,
         ),
       ],
@@ -281,32 +283,70 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
   }
 
   Widget buildTimerBar() {
-    if (!isTimedMode || !isGameStarted) return const SizedBox.shrink();
+
 
     final progress = timeLeft / 60.0;
     final color = timeLeft > 20 ? Colors.green : timeLeft > 10 ? Colors.orange : Colors.red;
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Column(
+    return Stack(
+        alignment: Alignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Time Left:', style: TextStyle(color: Colors.white)),
-              Text('${timeLeft}s', style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[800],
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-          ),
-        ],
-      ),
-    );
-  }
+        // The background circular indicator.
+        SizedBox(
+        width: 50,
+        height: 45,
+        child: CircularProgressIndicator(
+        value: progress,
+        strokeWidth: 5,
+        backgroundColor: const Color(0xFFE5E7EB),
+    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
+    ),
+    ),
+    // The text displaying the remaining seconds.
+    Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    Text(
+    '$timeLeft',
+    style: const TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Colors.white
+    ),
+    ),
+    // const Text(
+    // 'seconds',
+    // style: TextStyle(
+    // fontSize: 14,
+    // color: Colors.white,
+    // ),
+    // ),
+    ],
+    ),
+    ],);
+
+    //   Container(
+    //   margin: const EdgeInsets.all(16),
+    //   child: Column(
+    //     children: [
+    //       Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //         children: [
+    //           const Text('Time Left:', style: TextStyle(color: Colors.white)),
+    //           Text('${timeLeft}s', style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold)),
+    //         ],
+    //       ),
+    //       const SizedBox(height: 8),
+    //       LinearProgressIndicator(
+    //         value: progress,
+    //         backgroundColor: Colors.grey[800],
+    //         valueColor: AlwaysStoppedAnimation<Color>(color),
+    //       ),
+    //     ],
+    //   ),
+    // );
+  } ///
+
 
   Widget buildScoreBoard() {
     return Container(
@@ -326,7 +366,7 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
         ],
       ),
     );
-  }
+  } ///
 
   Widget _buildScoreItem(String label, String value, Color color) {
     return Column(
@@ -458,7 +498,7 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
         ],
       ),
     );
-  }
+  } ////
 
   Widget buildStartScreen() {
     return Center(
@@ -492,7 +532,9 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
           buildGameModeSelector(),
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: startGame,
+            onPressed: (){
+              Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=>Errorplay()));
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
@@ -512,7 +554,7 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
         ],
       ),
     );
-  }
+  } /////
 
   @override
   Widget build(BuildContext context) {
@@ -523,6 +565,10 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
         title: const Text(
           'Grammar Error Hunt',
           style: TextStyle(color: Colors.white),
+        ),
+        leading:  IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           if (isGameStarted)
@@ -544,34 +590,7 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
               buildTimerBar(),
               buildScoreBoard(),
               buildSentence(),
-              AnimatedBuilder(
-                animation: _streakController,
-                builder: (context, child) {
-                  if (streak > 0 && streak % 5 == 0 && _streakController.isAnimating) {
-                    return Transform.scale(
-                      scale: 1.0 + (_streakController.value * 0.5),
-                      child: Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.purple),
-                        ),
-                        child: const Text(
-                          '🔥 Streak Bonus! +5 Points!',
-                          style: TextStyle(
-                            color: Colors.purple,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
+
             ] else ...[
               buildStartScreen(),
             ],

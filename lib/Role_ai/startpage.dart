@@ -1,22 +1,26 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Providers/Aichat_provider/Aichat_provider.dart';
 import 'package:hi/Role_ai/Aivirtual.dart';
+import 'package:hi/Role_ai/blanket.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
-class StatePage extends StatefulWidget {
+class StatePage extends ConsumerStatefulWidget {
   const StatePage({Key? key}) : super(key: key);
 
   @override
-  State<StatePage> createState() => _StatePageState();
+  ConsumerState<StatePage> createState() => _StatePageState();
 }
 
-class _StatePageState extends State<StatePage> {
+class _StatePageState extends ConsumerState<StatePage> {
   final List<Map<String, dynamic>> scenarios = [
     {
       'id': 1,
       'title': 'Job Interview',
       'description': 'Practice answering common interview questions',
-      'duration': '5-10 min',
+      'duration': '5/10 ch',
       'difficulty': 'Beginner',
       'difficultyColor': const Color(0xFF4CAF50),
       'icon': Icons.work,
@@ -27,7 +31,7 @@ class _StatePageState extends State<StatePage> {
       'id': 2,
       'title': 'Ordering at a Restaurant',
       'description': 'Learn how to order food and make special requests',
-      'duration': '3-5 min',
+      'duration': '3/5 ch',
       'difficulty': 'Beginner',
       'difficultyColor': const Color(0xFF4CAF50),
       'icon': Icons.restaurant,
@@ -84,13 +88,34 @@ class _StatePageState extends State<StatePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1a1a1a),
+      backgroundColor: const Color(0xFF1A1A1A),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1A1A),
+        elevation: 0,
+        title: const Text(
+          'Role Play',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
+        ),
+        leading:  IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+
+      ),
+      // backgroundColor: const Color(0xFF1a1a1a),
+      // backgroundColor: Colors.grey,
       body: SafeArea(
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            // _buildHeader(),
 
             // Scenarios List
             Expanded(
@@ -106,7 +131,7 @@ class _StatePageState extends State<StatePage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: Colors.black,
         border: Border(
           bottom: BorderSide(
             color: Color(0xFFE5E7EB),
@@ -138,7 +163,8 @@ class _StatePageState extends State<StatePage> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF111827),
+                    // color: Color(0xFF111827),
+                    color: Colors.white
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -172,7 +198,7 @@ class _StatePageState extends State<StatePage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.black,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -217,7 +243,7 @@ class _StatePageState extends State<StatePage> {
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF111827),
+                            color:Colors.white
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -229,14 +255,36 @@ class _StatePageState extends State<StatePage> {
                             height: 1.43,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          scenario['duration'],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF9CA3AF),
-                          ),
-                        ),
+                        Row(
+
+                          children: [
+                            new LinearPercentIndicator(
+                              width: 100.0,
+                              lineHeight: 4.0,
+                              percent: 0.7,
+                              backgroundColor: Colors.white,
+                              progressColor: Colors.blue,
+                              barRadius: Radius.circular(10.0),
+                              animation: true,
+                              animationDuration: 1000,
+                              curve: Curves.easeInOut,
+                              animateFromLastPercent: true,
+
+
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              scenario['duration'],
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color:Colors.white
+                              ),
+                            ),
+
+                          ],
+                        )
+
+
                       ],
                     ),
                   ),
@@ -298,6 +346,8 @@ class _StatePageState extends State<StatePage> {
   }
 
   void _onStartScenario(Map<String, dynamic> scenario) {
+
+
     // Handle scenario start logic here
     print('Starting scenario: ${scenario['title']}');
 
@@ -312,10 +362,14 @@ class _StatePageState extends State<StatePage> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
+
+
           ElevatedButton(
             onPressed: () {
+
+
               Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>AIVirtual()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>blanket()));
               // Navigate to the actual scenario screen
             },
             child: const Text('Start'),
