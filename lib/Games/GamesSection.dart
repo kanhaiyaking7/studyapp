@@ -460,7 +460,7 @@ class _GamesSectionState extends State<GamesSection>
     if(game.title == 'Error Hunt'){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ErrorHunt()));
     }else if(game.title == 'Translation Match'){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>TranslationMatchGame()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>TranslationMatchScreen()));
     }else if(game.title == 'Grammar Quest'){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>FindWordMeaningGame()));
     }

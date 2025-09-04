@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hi/Speaking/ShowVideo.dart';
 import 'package:hi/Speaking/SpeakButt.dart';
+import 'package:hi/Speaking/videoTimer.dart';
 
 class VideoCallScreen extends StatefulWidget {
   const VideoCallScreen({Key? key}) : super(key: key);
@@ -12,10 +15,12 @@ class VideoCallScreen extends StatefulWidget {
 class _VideoCallScreenState extends State<VideoCallScreen> {
   bool isMuted = false;
   bool isListening = false;
-  int message = 0;
+  int message = 1;
+  bool _istarted = false;
 
 
   final List UserSpeak = [
+    "",
     "Hello",
     "I am here for a job interview",
         "My name is Simon",
@@ -26,20 +31,35 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   ];
 
+  final List Video_stop = [0, 3, 3, 5, 3,10];
+
    complet_mic(){
     setState(() {
       message++;
       play_anim;
+      print("hahahahaah");
+      stop_anim;
     });
 }
 
 stop_anim(person){
-     person();
+     // person();
+
+       Timer(Duration(seconds: Video_stop[message]), () {
+         print("Pausing video after seconds.");
+         // if (_controller.value.isPlaying) {
+         //   _controller.pause();
+         // }
+         person();
+       });
+
 }
 
 play_anim(person){
      person();
 }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -188,6 +208,38 @@ play_anim(person){
                   person_play:play_anim,
                 ),
               ),
+              // Container(
+              //   width: 100,
+              //   height: 30,
+              //   color: Colors.red,
+              //
+              //   child:    Videotimer()),
+
+
+
+              // Container(
+              //   child:  Center(
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: <Widget>[
+              //         // Display the countdown value.
+              //         Text(
+              //           '$_start',
+              //           style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              //         ),
+              //         // Display the 'seconds' label.
+              //         const Padding(
+              //           padding: EdgeInsets.only(left: 8.0),
+              //           child: Text(
+              //             'seconds',
+              //             style: TextStyle(fontSize: 24),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),,
+              // )
+
 
               // Container(
               //   width: double.infinity,
@@ -263,7 +315,7 @@ play_anim(person){
 
 
             // Text input container with decorative elements
-            Container(
+          _istarted ?  Container(
               width: double.infinity,
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
@@ -309,26 +361,26 @@ play_anim(person){
                   ),
                 ],
               ),
-            ),
+            ):Container(),
             const  Spacer(),
 
             // const SizedBox(height: 24),
 
             // Tap to speak text
-            const Text(
+            _istarted ?     const Text(
               'Tap to speak',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-            ),
+            ): Container(),
 
 
             const SizedBox(height: 10),
 
             // Microphone button
-            Container(
+            _istarted ?     Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
@@ -341,7 +393,18 @@ play_anim(person){
                      messageList:UserSpeak[message],
                      complete_speak:complet_mic
                  )
-              ),
+              ): Container(),
+
+            _istarted ? Container(): Container(
+              child: ElevatedButton(
+                onPressed: (){
+                  setState(() {
+                    _istarted = true;
+                  });
+                },
+                child:
+              Text("Start",style: TextStyle(fontSize: 20,color: Colors.white),),
+            ) ),
 
 
 

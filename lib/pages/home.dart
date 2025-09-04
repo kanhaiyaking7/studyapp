@@ -6,6 +6,9 @@ import 'package:hi/Games/GamesSection.dart';
 import 'package:hi/Reading/Bookstore.dart';
 import 'package:hi/Reading/Reading.dart';
 import 'package:hi/Role_ai/startpage.dart';
+import 'package:hi/Speaking/AnimeHome.dart';
+import 'package:hi/Speaking/LoadAnim.dart';
+import 'package:hi/Speaking/ShowAnime.dart';
 import 'package:hi/Speaking/VideoStudy.dart';
 
 class Home extends StatefulWidget {
@@ -247,7 +250,7 @@ class _HomeState extends State<Home> {
                 const Color(0xFF4A90E2),
                 screenWidth,
                     () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoStudy()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoCallScreen()));
                   // Navigate to conversation practice
                 },
               ),

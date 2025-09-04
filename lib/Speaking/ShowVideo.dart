@@ -14,6 +14,7 @@ class _VideoFormatState extends State<VideoFormat> {
   final videourl = 'https://www.youtube.com/watch?v=0k0Uc9uAJwk&t=111s';
   late YoutubePlayerController _controller;
   late Timer _timer;
+  bool _isloading = false;
 
   final List<int> pauseTimes = [10, 15, 22];
   final Set<int> alreadyPaused = {};
@@ -34,8 +35,12 @@ class _VideoFormatState extends State<VideoFormat> {
             controlsVisibleAtStart: false,
             disableDragSeek: false,
             useHybridComposition: true,
+
         ));
     // TODO: implement initState
+
+    // stopAfterDelay(12);
+
     super.initState();
 
   }
@@ -47,6 +52,14 @@ void dispose() {
   super.dispose();
 }
 
+  void stopAfterDelay(int seconds) {
+    Timer(Duration(seconds: seconds), () {
+      print("Pausing video after $seconds seconds.");
+      if (_controller.value.isPlaying) {
+        _controller.pause();
+      }
+    });
+  }
 
   void stop(){
 
@@ -60,10 +73,14 @@ void dispose() {
     _controller.play();
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     widget.person_stop(stop);
     widget.person_play(play);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

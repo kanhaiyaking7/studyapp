@@ -260,7 +260,7 @@ class _StatePageState extends ConsumerState<StatePage> {
                           children: [
                             new LinearPercentIndicator(
                               width: 100.0,
-                              lineHeight: 4.0,
+                              lineHeight: 6.0,
                               percent: 0.7,
                               backgroundColor: Colors.white,
                               progressColor: Colors.blue,
