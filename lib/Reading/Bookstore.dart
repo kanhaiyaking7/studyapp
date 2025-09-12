@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Providers/ReadingBook_provider/Book_detail_provider.dart';
+import 'package:hi/Providers/ReadingBook_provider/Chapterinfo.dart';
 import 'package:hi/Reading/BookHome.dart';
 
 const bookfront = 'assets/images/bookcover.jpg';
@@ -134,13 +135,15 @@ class _BookStoreState extends ConsumerState<BookStore> {
   @override
   Widget build(BuildContext context) {
     final booksAsync = ref.watch(BooksProvider);
+    final Chapter_readinginfo = ref.read(Chapterinfo.notifier);
+
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
         title: const Text(
-          'BOOK LENDING',
+          'BOOK Reading',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -156,7 +159,16 @@ class _BookStoreState extends ConsumerState<BookStore> {
       ),
       body:
           booksAsync.when(
+
               data: (books){
+                if(Chapter_readinginfo.check_chapterlength() < 2){
+
+                  books.forEach((book){
+                    Chapter_readinginfo.store_bookdata(book.title, 1);
+                  });
+
+                }
+
                 final filteredBooks =  books.where((b) => b.category == selectedCategory).toList();
 
                 return Column(
@@ -244,10 +256,11 @@ class _BookStoreState extends ConsumerState<BookStore> {
   }
 
   Widget _buildBookCard(Book book) {
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(12),
@@ -264,8 +277,8 @@ class _BookStoreState extends ConsumerState<BookStore> {
           // Book cover placeholder
           Image.network(
             book.coverUrl,
-            width: 90,
-            height: 120,
+            width: 100,
+            height: 140,
             fit: BoxFit.fill,
           ),
           // Hero(
@@ -348,7 +361,7 @@ class _BookStoreState extends ConsumerState<BookStore> {
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
+                          horizontal: 22,
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(

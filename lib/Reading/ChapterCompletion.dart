@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class ChapterCompletionScreen extends StatefulWidget {
   final cover;
-  const ChapterCompletionScreen({required this.cover});
+  final  chaptercompleted;
+  final int chapter_no;
+  const ChapterCompletionScreen({required this.cover,required this.chaptercompleted, required this.chapter_no});
 
   @override
   State<ChapterCompletionScreen> createState() => _ChapterCompletionScreenState();
@@ -18,6 +20,7 @@ class _ChapterCompletionScreenState extends State<ChapterCompletionScreen>
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -204,6 +207,7 @@ class _ChapterCompletionScreenState extends State<ChapterCompletionScreen>
                   onPressed: () {
                     // Add navigation logic here
                     print('Continue to next chapter');
+                    widget.chaptercompleted(widget.chapter_no);
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(

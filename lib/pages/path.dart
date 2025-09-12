@@ -9,6 +9,8 @@ import 'package:hi/components/Done.dart';
 import 'package:hi/components/PrevResult.dart';
 import 'package:hi/components/Result.dart';
 import 'package:hi/components/WinStreak.dart';
+import 'package:hi/components/homecompnent.dart';
+import 'package:hi/utils/IconList.dart';
 
 const String study_child = 'assets/images/children_study.png';
 
@@ -22,7 +24,7 @@ class PathScreen extends ConsumerStatefulWidget {
 class _PathScreenState extends ConsumerState<PathScreen> {
 
 
-  final All_path_data _all_path_data = All_path_data();// Number of completed levels
+  // final All_path_data _all_path_data = All_path_data();// Number of completed levels
 
 
   final List<Topic> topics = [
@@ -117,6 +119,27 @@ class _PathScreenState extends ConsumerState<PathScreen> {
     )
   ];
 
+  startlesson(lesson,completedLevels) async{
+
+      if(completedLevels <= lesson.Level){
+        // final data = await  _all_path_data.get_data(completedLevels);
+        // ref.read(Path_data.notifier).update_data(data, completedLevels+1);
+
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context)=> homecomponent(level:completedLevels)));
+
+      }if(completedLevels > lesson.Level){
+        final data =  ref.read(UserProgress_Provider).completed_level;
+        var  info = data[lesson.Level - 1];
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (_)=> PrevResult( Lesson:lesson.Level,data:info)));
+      }
+
+      // Navigator.push(context, MaterialPageRoute(builder:
+      //     (context)=>Pro(data:data)));
+
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -140,6 +163,70 @@ class _PathScreenState extends ConsumerState<PathScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+
+                  Row(
+                    children: [
+
+                      const SizedBox(width: 12),
+                      Container(
+                        child:  Row(
+                          children: [
+                            Text(AppIcon.streakemoji,style: TextStyle(fontSize: 22),),
+                            // SizedBox(width: 4),
+                            Consumer(builder: (context,ref,child){
+                              final scroree =   ref.watch(UserProgress_Provider).score;
+                              return  Text(
+                                // scroree.toString() ,
+                                "22",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            })
+
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        // decoration: BoxDecoration(
+                        //   color: const Color(0xFFFFD700),
+                        //   borderRadius: BorderRadius.circular(8),
+                        // ),
+                        child:  Row(
+                          children: [
+                            Text(AppIcon.xp,style: TextStyle(fontSize: 20),),
+                            // Icon(
+                            //   // Icons.currency_exchange,
+                            //   Icons.energy_savings_leaf,
+                            //
+                            //   color: Colors.orangeAccent,
+                            //   size: 25,
+                            // ),
+                            SizedBox(width: 2),
+                            Consumer(builder: (context,ref,child){
+                            final scroree =   ref.watch(UserProgress_Provider).score;
+                            return  Text(
+                              // scroree.toString() ,
+                              "22",
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                            })
+
+                          ],
+                        ),
+                      ),
+
+
+                    ],
+                  ),
                   Row(
                     children: [
                       // Container(
@@ -168,52 +255,17 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                       //     ],
                       //   ),
                       // ),
-                      Container(
-
-                        child:   CountryFlag.fromLanguageCode('hi',shape: Circle(),),
-                      ),
+                      // Container(
+                      //
+                      //   child:   CountryFlag.fromLanguageCode('hi',shape: Circle(),),
+                      // ),
                       const SizedBox(width: 20),
                       const Text(
-                        'Lessons',
+                        '🔔',
                         style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-
-                      const SizedBox(width: 12),
-                      Container(
-                        // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        // decoration: BoxDecoration(
-                        //   color: const Color(0xFFFFD700),
-                        //   borderRadius: BorderRadius.circular(8),
-                        // ),
-                        child:  Row(
-                          children: [
-                            Icon(
-                              Icons.currency_exchange,
-                              color: Colors.orangeAccent,
-                              size: 20,
-                            ),
-                            SizedBox(width: 4),
-                            Consumer(builder: (context,ref,child){
-                            final scroree =   ref.watch(UserProgress_Provider).score;
-                            return  Text(
-                              scroree.toString() ,
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            );
-                            })
-
-                          ],
+                            color: Colors.grey,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
                         ),
                       ),
                     ],
@@ -278,8 +330,44 @@ class _PathScreenState extends ConsumerState<PathScreen> {
             //     fontWeight: FontWeight.w500,
             //   ),
             // ),
+            const SizedBox(height: 12),
+  Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.green,
+            // color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child:
+          Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
 
-            const SizedBox(height: 30),
+              Text(
+                // topic.Unit_name ,
+                "Module 1, Topic 1",
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                // topic.topic,
+                "Basic English",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          )
+  ),
+
+            const SizedBox(height: 5),
 
             // Lessons Path
             Expanded(
@@ -312,34 +400,42 @@ class _PathScreenState extends ConsumerState<PathScreen> {
 
 
   Widget _buildTopicHeader(Topic topic) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: topic.Background_color,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            topic.Unit_name ,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return Center(
+      child: Container(
+        width: 200,
+        padding: const EdgeInsets.all(8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: topic.Background_color,
+          // color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child:
+        Row(
+          // crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
+            Text(
+              // topic.Unit_name ,
+              "Level 1:",
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            topic.topic,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 4),
+            Text(
+              // topic.topic,
+              "Energy Flow",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -350,7 +446,7 @@ class _PathScreenState extends ConsumerState<PathScreen> {
       children: [
         GestureDetector(
           onTap: (){
-           _showLessonDialog(lesson,completedLevels);
+           // _showLessonDialog(lesson,completedLevels);
           },
           child:     Row(
             children: [
@@ -361,25 +457,37 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.grey, // Choose your border color
+                    color: lesson.Level < completedLevels ? Colors.orange
+                        : lesson.Level == completedLevels
+                        ? Colors.green
+                    // ? const Color(0xFFE97434)
+                        : const Color(0xFF4A4A4A),
+                    // Choose your border color
                     width: 3.0, // Adjust the border thickness as needed
                   ),
                 ),
                 alignment: Alignment.center,
                 child:
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 65,
+                  height: 65,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: lesson.Level < completedLevels ? Colors.greenAccent
+                    color: lesson.Level < completedLevels ? Colors.orange
                         : lesson.Level == completedLevels
-                        ? const Color(0xFFE97434)
+                      ? Colors.green
+                        // ? const Color(0xFFE97434)
                         : const Color(0xFF4A4A4A),
                   ),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
+                      // Text("1",
+                      //   style:
+                      //   TextStyle(color: Colors.white,
+                      //       fontSize: 30,fontWeight: FontWeight.w900),
+                      //
+                      // ),
                       Icon(
                         lesson.icon,
                         color: Colors.black,
@@ -403,7 +511,7 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                       //       ),
                       //     ),
                       //   ),
-                    ],
+                    ]
                   ),
                 ),
               ),
@@ -423,7 +531,7 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                           style:  TextStyle(
                             color:  lesson.Level < completedLevels ? Colors.white
                                 : lesson.Level == completedLevels
-                                ? Colors.redAccent
+                                ? Colors.green
                                 : const Color(0xFF4A4A4A),
 
                             fontSize: 18,
@@ -432,24 +540,44 @@ class _PathScreenState extends ConsumerState<PathScreen> {
                         ),
 
 
-                        Icon(
-                            lesson.Level < completedLevels ? Icons.check_circle : Icons.cloud_download,
-                            color: lesson.Level < completedLevels ? Colors.green : Colors.grey,
-                            size: 24),
+                        // Icon(
+                        //     lesson.Level < completedLevels ? Icons.check_circle : Icons.cloud_download,
+                        //     color: lesson.Level < completedLevels ? Colors.green : Colors.grey,
+                        //     size: 24),
                       ],
                     ),
 
-                    if (lesson.subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        lesson.subtitle,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
+                    lesson.Level < completedLevels ?    Text(
+                      lesson.subtitle,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
                       ),
+                    ) :lesson.Level == completedLevels ?
 
-                    ],
+                    ElevatedButton(onPressed: (){
+                      startlesson(lesson,completedLevels);
+                    },
+                        child: Text("Start here",style: TextStyle(color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green
+                      ),
+                    ) :  Text(
+                      lesson.subtitle,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    )
+
+
+                    // if (lesson.subtitle.isNotEmpty && ) ...[
+                    //   const SizedBox(height: 4),
+                    //
+                    //
+                    // ],
+
+
                     // if (lesson.hasStartButton) ...[
                     //   const SizedBox(height: 12),
                     //   ElevatedButton(
@@ -507,168 +635,180 @@ class _PathScreenState extends ConsumerState<PathScreen> {
     );
   }
 
-  void _showLessonDialog(LessonData lesson,completedLevels) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) {
-        return Dialog(
-          backgroundColor: Colors.blueAccent.withOpacity(0.90),
-          // decoration:BoxDecoration(
-          //     border: Border.all(color: Colors.white)
-          // ),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // Main curved container
-              Padding(
-                padding: const EdgeInsets.all(28),
-
-                child: Column(
-
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    // Header row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Left side - Icon and label
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.school_outlined,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                             Text(
-                              'Practice',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Right side - Duration badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
-                              width: 1,
-                            ),
-                          ),
-                          child: const Text(
-                            '2 MIN',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Main title
-                     Text(
-                      lesson.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Subtitle/Description
-                    const Text(
-                      'Discover how to greet people Learn',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 36),
-
-                    // Action button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed:() async {
-                          if(completedLevels <= lesson.Level){
-                            final data = await  _all_path_data.get_data(completedLevels);
-                            ref.read(Path_data.notifier).update_data(data, completedLevels+1);
-
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (_)=> Pro()));
-
-                          }if(completedLevels > lesson.Level){
-                            final data =  ref.read(UserProgress_Provider).completed_level;
-                          var  info = data[lesson.Level - 1];
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (_)=> PrevResult( Lesson:lesson.Level,data:info)));
-                          }
-
-                          // Navigator.push(context, MaterialPageRoute(builder:
-                          //     (context)=>Pro(data:data)));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF2563eb),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          elevation: 8,
-                          shadowColor: Colors.black.withOpacity(0.2),
-                        ),
-                        child: const Text(
-                          "Let's go",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Positioned lesson icon "pointing out"
-
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // void _showLessonDialog(LessonData lesson,completedLevels) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (_) {
+  //       return Dialog(
+  //         backgroundColor: Colors.blueAccent.withOpacity(0.90),
+  //         // decoration:BoxDecoration(
+  //         //     border: Border.all(color: Colors.white)
+  //         // ),
+  //         child: Stack(
+  //           clipBehavior: Clip.none,
+  //           children: [
+  //             // Main curved container
+  //             Padding(
+  //               // padding: const EdgeInsets.all(28),
+  //               padding: EdgeInsets.all(10),
+  //
+  //               child: Column(
+  //
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //
+  //                 children: [
+  //                 Container(
+  //
+  //                       child: const Text(
+  //                         '2 MIN',
+  //                         style: TextStyle(
+  //                           color: Colors.white,
+  //                           fontSize: 12,
+  //                           fontWeight: FontWeight.bold,
+  //                         ),
+  //                       ),
+  //                 ),
+  //                   // Header row
+  //                   // Row(
+  //                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   //   children: [
+  //                   //     // Left side - Icon and label
+  //                   //     Row(
+  //                   //       children: [
+  //                   //         // Container(
+  //                   //         //   padding: const EdgeInsets.all(8),
+  //                   //         //   decoration: BoxDecoration(
+  //                   //         //     color: Colors.white.withOpacity(0.15),
+  //                   //         //     borderRadius: BorderRadius.circular(8),
+  //                   //         //     border: Border.all(
+  //                   //         //       color: Colors.white,
+  //                   //         //       width: 1,
+  //                   //         //     ),
+  //                   //         //   ),
+  //                   //         //   child: const Icon(
+  //                   //         //     Icons.school_outlined,
+  //                   //         //     color: Colors.white,
+  //                   //         //     size: 20,
+  //                   //         //   ),
+  //                   //         // ),
+  //                   //         const SizedBox(width: 12),
+  //                   //          Text(
+  //                   //           'Practice',
+  //                   //           style: TextStyle(
+  //                   //             color: Colors.white,
+  //                   //             fontSize: 14,
+  //                   //             fontWeight: FontWeight.bold,
+  //                   //             letterSpacing: 1.2,
+  //                   //           ),
+  //                   //         ),
+  //                   //       ],
+  //                   //     ),
+  //                   //     // Right side - Duration badge
+  //                   //     Container(
+  //                   //       padding: const EdgeInsets.symmetric(
+  //                   //         horizontal: 12,
+  //                   //         vertical: 6,
+  //                   //       ),
+  //                   //       decoration: BoxDecoration(
+  //                   //         color: Colors.white.withOpacity(0.15),
+  //                   //         borderRadius: BorderRadius.circular(14),
+  //                   //         border: Border.all(
+  //                   //           color: Colors.white.withOpacity(0.1),
+  //                   //           width: 1,
+  //                   //         ),
+  //                   //       ),
+  //                   //       child: const Text(
+  //                   //         '2 MIN',
+  //                   //         style: TextStyle(
+  //                   //           color: Colors.white,
+  //                   //           fontSize: 12,
+  //                   //           fontWeight: FontWeight.bold,
+  //                   //         ),
+  //                   //       ),
+  //                   //     ),
+  //                   //   ],
+  //                   // ),
+  //                   // const SizedBox(height: 32),
+  //
+  //                   // Main title
+  //                    Text(
+  //                     lesson.title,
+  //                     style: TextStyle(
+  //                       color: Colors.white,
+  //                       fontSize: 26,
+  //                       fontWeight: FontWeight.bold,
+  //                       height: 1.1,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 12),
+  //
+  //                   // Subtitle/Description
+  //                   const Text(
+  //                     'Discover how to greet people Learn',
+  //                     style: TextStyle(
+  //                       color: Colors.white,
+  //                       fontSize: 17,
+  //                       fontWeight: FontWeight.w400,
+  //                       height: 1.4,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 36),
+  //
+  //                   // Action button
+  //                   SizedBox(
+  //                     width: double.infinity,
+  //                     child: ElevatedButton(
+  //                       onPressed:() async {
+  //                         if(completedLevels <= lesson.Level){
+  //                           final data = await  _all_path_data.get_data(completedLevels);
+  //                           ref.read(Path_data.notifier).update_data(data, completedLevels+1);
+  //
+  //                           Navigator.pushReplacement(context,
+  //                               MaterialPageRoute(builder: (_)=> Pro()));
+  //
+  //                         }if(completedLevels > lesson.Level){
+  //                           final data =  ref.read(UserProgress_Provider).completed_level;
+  //                         var  info = data[lesson.Level - 1];
+  //                           Navigator.pushReplacement(context,
+  //                               MaterialPageRoute(builder: (_)=> PrevResult( Lesson:lesson.Level,data:info)));
+  //                         }
+  //
+  //                         // Navigator.push(context, MaterialPageRoute(builder:
+  //                         //     (context)=>Pro(data:data)));
+  //                       },
+  //                       style: ElevatedButton.styleFrom(
+  //                         backgroundColor: Colors.white,
+  //                         foregroundColor: const Color(0xFF2563eb),
+  //                         padding: const EdgeInsets.symmetric(vertical: 16),
+  //                         shape: RoundedRectangleBorder(
+  //                           borderRadius: BorderRadius.circular(30),
+  //                         ),
+  //                         elevation: 8,
+  //                         shadowColor: Colors.black.withOpacity(0.2),
+  //                       ),
+  //                       child: const Text(
+  //                         "Let's go",
+  //                         style: TextStyle(
+  //                           fontSize: 18,
+  //                           fontWeight: FontWeight.w700,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //
+  //             // Positioned lesson icon "pointing out"
+  //
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 }
 

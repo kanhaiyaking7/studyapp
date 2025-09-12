@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:hi/components/navbarcomponent.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sound_library/sound_library.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class YesNoQuiz extends ConsumerStatefulWidget {
-  // final Function(int) setLayer;
-  // final int layer;
+
   final Function onNext;
-  // final String data;
+final dynamic data;
+  final int progress;
+  final Function incorrectAns;
+
   const YesNoQuiz({
 
-    // required this.setLayer,
-    // required this.layer,
     required this.onNext,
-    // required this.data
+    required this.data,
+    required this.progress,
+    required this.incorrectAns
   });
 
   @override
@@ -34,10 +37,10 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
 
   late List<Map<String,dynamic>> user = [
     {
-      "question": unique_sentence[0]['english_word'],
-      'hindi_mean':unique_sentence[0]['hindi_mean'],
-      'option':unique_sentence[0]['opt'],
-      'correct_ans':unique_sentence[0]['corr_ans']
+      "question": unique_sentence['english_word'],
+      'hindi_mean':unique_sentence['hindi_mean'],
+      'option':unique_sentence['opt'],
+      'correct_ans':unique_sentence['corr_ans']
 
     }
   ];
@@ -48,7 +51,7 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
   Future _speak() async {
 
     await flutterTts.setLanguage("hi");
-    await flutterTts.setPitch(5);
+    await flutterTts.setPitch(1);
     await flutterTts.speak(user[0]['hindi_mean']);
   }
 
@@ -57,10 +60,10 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
     // TODO: implement initState
     super.initState();
  _speak();
-    final data =  ref.read(Path_data).data;
-    info = data;
-    var extract_data = info['complete_eng_sentence'];
-    unique_sentence= extract_data;
+    // final data =  ref.read(Path_data).data;
+    // info = data;
+    // var extract_data = info['complete_eng_sentence'];
+    unique_sentence= widget.data;
   }
 
 
@@ -91,6 +94,7 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
       widget.onNext();
     }
     else{
+      widget.incorrectAns();
       setState(() {
         butt = "wrong";
       });
@@ -102,6 +106,8 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
       widget.onNext();
     }
     else{
+      widget.incorrectAns();
+
       setState(() {
         butt = "wrong";
       });
@@ -125,79 +131,39 @@ class _YesNoQuizState extends ConsumerState<YesNoQuiz> {
             children: [
               // Header
               Container(
+                width: double.infinity,
+                height: 41,
 
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                  children: [
-                    // Top row with back button and menu
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Icon(
-                            Icons.close_sharp,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        Container(child:
-                        new LinearPercentIndicator(
-                          width: 250.0,
-                          lineHeight: 8.0,
-                          percent: 0.2,
-                          backgroundColor: Colors.white,
-                          progressColor: Colors.blue,
-                          barRadius: Radius.circular(10.0),
-                          animation: true,
-                          animationDuration: 1000,
-                          curve: Curves.easeInOut,
-                          animateFromLastPercent: true,
-
-
-                        ),
-                        ),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Icon(
-                            Icons.grid_view,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // const SizedBox(height: 15),
-
-                    // Progress bar
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //   children: List.generate(4, (index) {
-                    //     return Container(
-                    //       width: (screenWidth - 60) / 7,
-                    //       height: 8,
-                    //       decoration: BoxDecoration(
-                    //         color: index < 3
-                    //             ? Colors.white
-                    //             : Colors.white.withOpacity(0.3),
-                    //         borderRadius: BorderRadius.circular(4),
-                    //       ),
-                    //     );
-                    //   }),
-                    // ),
-                  ],
-                ),
+                child: navbar(progress:widget.progress) ,
               ),
+              // Container(
+              //
+              //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //   child: Column(
+              //     children: [
+              //       // Top row with back button and menu
+              //
+              //       // const SizedBox(height: 15),
+              //
+              //       // Progress bar
+              //       // Row(
+              //       //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //       //   children: List.generate(4, (index) {
+              //       //     return Container(
+              //       //       width: (screenWidth - 60) / 7,
+              //       //       height: 8,
+              //       //       decoration: BoxDecoration(
+              //       //         color: index < 3
+              //       //             ? Colors.white
+              //       //             : Colors.white.withOpacity(0.3),
+              //       //         borderRadius: BorderRadius.circular(4),
+              //       //       ),
+              //       //     );
+              //       //   }),
+              //       // ),
+              //     ],
+              //   ),
+              // ),
               // Main content
               Expanded(
                 child: Container(

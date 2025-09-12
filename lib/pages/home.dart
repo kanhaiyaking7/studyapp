@@ -10,6 +10,7 @@ import 'package:hi/Speaking/AnimeHome.dart';
 import 'package:hi/Speaking/LoadAnim.dart';
 import 'package:hi/Speaking/ShowAnime.dart';
 import 'package:hi/Speaking/VideoStudy.dart';
+import 'package:hi/utils/Loadinggame.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -261,7 +262,7 @@ class _HomeState extends State<Home> {
                 const Color(0xFF7B68EE),
                 screenWidth,
                     () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>GamesSection()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Loadinggame()));
                   // Navigate to pronunciation drills
                 },
               ),

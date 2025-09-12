@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Providers/ReadingBook_provider/Bookdata_provider.dart';
+import 'package:hi/Providers/ReadingBook_provider/Chapterinfo.dart';
 import 'package:hi/Reading/ChapterCompletion.dart';
 import 'package:hi/Reading/Reading.dart';
 
+//separate
 class Chapter {
   final String title;
   final int number;
@@ -17,6 +19,7 @@ class Chapter {
 
   });
 }
+///
 
 class BookHome extends ConsumerStatefulWidget {
   final  book;
@@ -27,7 +30,9 @@ class BookHome extends ConsumerStatefulWidget {
 }
 
 class _BookHomeState extends ConsumerState<BookHome> {
-  int chapter_completed = 1;
+ late int chapter_completed = ref.read(Chapterinfo.notifier).
+ get_bookdata(widget.book.title);
+
   String bookTitle = "The Giant Kingdom";
   String bookDescription = "Embark on an enchanting journey through the mystical Giant Kingdom, where courage meets magic and friendship conquers all. This captivating tale follows young heroes as they navigate through ancient forests, towering castles, and face legendary giants in their quest to save their homeland. Perfect for children who love adventure and fantasy stories filled with wonder and excitement.";
   IconData bookIcon = Icons.castle;
@@ -47,11 +52,25 @@ class _BookHomeState extends ConsumerState<BookHome> {
     Chapter(title: "Epilogue: New Beginnings", number: 12),
   ];
 
+  void chaptercompleted(chapter_no){
+    print(chapter_no);
+
+    if(chapter_no == chapter_completed){
+      setState(() {
+        chapter_completed++;
+      });
+
+      ref.read(Chapterinfo.notifier).update_booklevel(widget.book.title,chapter_completed );
+    }
+
+
+  }
+
   // int get completedChapters => chapters.where((chapter) => chapter.isCompleted).length;
 
   @override
   Widget build(BuildContext context) {
-    final bookdata = ref.watch(BookData);
+    final bookdata = ref.watch(BookData(widget.book.bookid));
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A1A),
       appBar: AppBar(
@@ -61,32 +80,32 @@ class _BookHomeState extends ConsumerState<BookHome> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_border, color: Colors.orange),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Book bookmarked!'),
-                  backgroundColor: Colors.orange,
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.share, color: Colors.white),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Sharing book...'),
-                  backgroundColor: Colors.orange,
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.bookmark_border, color: Colors.orange),
+        //     onPressed: () {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(
+        //           content: Text('Book bookmarked!'),
+        //           backgroundColor: Colors.orange,
+        //           duration: Duration(seconds: 2),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        //   IconButton(
+        //     icon: const Icon(Icons.share, color: Colors.white),
+        //     onPressed: () {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //         const SnackBar(
+        //           content: Text('Sharing book...'),
+        //           backgroundColor: Colors.orange,
+        //           duration: Duration(seconds: 2),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ],
       ),
       body:
       SingleChildScrollView(
@@ -205,6 +224,7 @@ class _BookHomeState extends ConsumerState<BookHome> {
             Container(
               child:   bookdata.when(
                   data: (heading){
+
                     // print("PPPPPPP");
                     // print(heading[0].content[0].englishText);
                     // print(heading[0].content[0].hindiText);
@@ -273,52 +293,52 @@ class _BookHomeState extends ConsumerState<BookHome> {
         ),
       ),
 
-      // Floating Read Button
-      floatingActionButton: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            int nextChapter = chapter_completed+ 1;
-            if (nextChapter <= chapters.length) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Opening Chapter $nextChapter...'),
-                  backgroundColor: Colors.orange,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Book completed! Great job!'),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            }
-          },
-          backgroundColor: Colors.orange,
-          icon: const Icon(Icons.menu_book, color: Colors.white),
-          label:
-          GestureDetector(
-            onTap: (){
-
-              // Navigator.push(context, MaterialPageRoute(builder: (context)=>Reading()));
-            },
-            child: Text(
-              chapter_completed < chapters.length ? 'Continue Reading' : 'Read Again',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ) ,
-          )
-
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // // Floating Read Button
+      // floatingActionButton: Container(
+      //   width: double.infinity,
+      //   margin: const EdgeInsets.symmetric(horizontal: 20),
+      //   child: FloatingActionButton.extended(
+      //     onPressed: () {
+      //       int nextChapter = chapter_completed+ 1;
+      //       if (nextChapter <= chapters.length) {
+      //         ScaffoldMessenger.of(context).showSnackBar(
+      //           SnackBar(
+      //             content: Text('Opening Chapter $nextChapter...'),
+      //             backgroundColor: Colors.orange,
+      //             duration: const Duration(seconds: 2),
+      //           ),
+      //         );
+      //       } else {
+      //         ScaffoldMessenger.of(context).showSnackBar(
+      //           const SnackBar(
+      //             content: Text('Book completed! Great job!'),
+      //             backgroundColor: Colors.green,
+      //             duration: Duration(seconds: 2),
+      //           ),
+      //         );
+      //       }
+      //     },
+      //     backgroundColor: Colors.orange,
+      //     icon: const Icon(Icons.menu_book, color: Colors.white),
+      //     label:
+      //     GestureDetector(
+      //       onTap: (){
+      //
+      //         // Navigator.push(context, MaterialPageRoute(builder: (context)=>Reading()));
+      //       },
+      //       child: Text(
+      //         chapter_completed < chapters.length ? 'Continue Reading' : 'Read Again',
+      //         style: const TextStyle(
+      //           color: Colors.white,
+      //           fontSize: 16,
+      //           fontWeight: FontWeight.bold,
+      //         ),
+      //       ) ,
+      //     )
+      //
+      //   ),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -327,14 +347,15 @@ class _BookHomeState extends ConsumerState<BookHome> {
 
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder:
-            (context)=>Reading(content:chapter.content, cover:widget.book)));
+
+        if(chapter.orderNo <= chapter_completed){
+          Navigator.push(context, MaterialPageRoute(builder:
+              (context)=>Reading(content:chapter.content, cover:widget.book,chaptercompleted:chaptercompleted,chapter_no:chapter.orderNo)));
+        }
+
 
         // Navigator.push(context, MaterialPageRoute(builder:
         //     (context)=>ChapterCompletionScreen()));
-
-
-
 
       },
       child: Container(
@@ -409,17 +430,17 @@ class _BookHomeState extends ConsumerState<BookHome> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                color:chapter.orderNo <= chapter_completed
+                color:chapter.orderNo < chapter_completed
                     ? Colors.green
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color:chapter.orderNo <= chapter_completed
+                  color:chapter.orderNo < chapter_completed
                       ? Colors.green
                       : Colors.grey[600]!,
                 ),
               ),
-              child:chapter.orderNo <= chapter_completed
+              child:chapter.orderNo < chapter_completed
                   ? const Icon(
                 Icons.check,
                 color: Colors.white,

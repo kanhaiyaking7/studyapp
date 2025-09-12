@@ -10,9 +10,14 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 class SimpleSpeak extends ConsumerStatefulWidget {
   final Function onNext;
-  // final String data;
+  final dynamic data;
+  final int progress;
+  final Function incorrectAns;
+
   const SimpleSpeak({required this.onNext,
-    // required this.data
+    required this.data,
+    required this.progress,
+    required this.incorrectAns
   });
   @override
   ConsumerState<SimpleSpeak> createState() => _SimpleSpeakState();
@@ -27,8 +32,8 @@ class _SimpleSpeakState extends ConsumerState<SimpleSpeak>
 
   late final List<Map<String,dynamic>> Unique_word = [
     {
-      'english_word':unique_sentence[1]['english_word'],
-      'hindi_meaning':unique_sentence[1]['hindi_mean'],
+      'english_word':unique_sentence['english_word'],
+      'hindi_meaning':unique_sentence['hindi_mean'],
 
     }
   ];
@@ -77,10 +82,10 @@ class _SimpleSpeakState extends ConsumerState<SimpleSpeak>
     initSpeech();
     _speak();
 
-    final data =  ref.read(Path_data).data;
-    info = data;
-    var extract_data = info['Speaking_word'];
-    unique_sentence= extract_data;
+    // final data =  ref.read(Path_data).data;
+    // info = data;
+    // var extract_data = info['Speaking_word'];
+    unique_sentence= widget.data;
   }
 
   void initSpeech() async {

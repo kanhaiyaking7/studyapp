@@ -368,7 +368,7 @@ class _WinStreakState extends State<WinStreak>
         onPressed: () {
           widget.onContinue?.call();
           // Navigator.of(context).pop();
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Result()));
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Result()));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.orange,

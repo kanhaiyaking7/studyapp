@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:hi/components/navbarcomponent.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class LanguageLearningScreen extends ConsumerStatefulWidget {
   final VoidCallback onNext;
-  // final String data;
+final dynamic data;
+  final int progress;
+  final Function incorrectAns;
 
 
   LanguageLearningScreen({required this.onNext,
-    // required this.data
+    required this.data,
+    required this.progress,
+    required this.incorrectAns
   });
 
 
@@ -27,10 +32,10 @@ class _LanguageLearningScreenState extends ConsumerState<LanguageLearningScreen>
 
   late List<Map<String,dynamic>> question  = [
     {
-      'dash_question':unique_sentence[0]['hindi_word'],
-      'meaning':unique_sentence[0]['english_mean'],
-      'option_list':unique_sentence[0]['opt'],
-      'correct_ans':unique_sentence[0]['corr_ans'],
+      'dash_question':unique_sentence['hindi_word'],
+      'meaning':unique_sentence['english_mean'],
+      'option_list':unique_sentence['opt'],
+      'correct_ans':unique_sentence['corr_ans'],
     }
   ];
 
@@ -49,10 +54,10 @@ class _LanguageLearningScreenState extends ConsumerState<LanguageLearningScreen>
     // TODO: implement initState
     super.initState();
     _speak();
-    final data =  ref.read(Path_data).data;
-    info = data;
-    var extract_data = info['complete_hindi_sentence'];
-    unique_sentence= extract_data;
+    // final data =  ref.read(Path_data).data;
+    // info = data;
+    // var extract_data = info['complete_hindi_sentence'];
+    unique_sentence= widget.data;
 
   }
 
@@ -79,6 +84,8 @@ class _LanguageLearningScreenState extends ConsumerState<LanguageLearningScreen>
         widget.onNext();
       }
       else{
+        widget.incorrectAns();
+
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -140,203 +147,169 @@ class _LanguageLearningScreenState extends ConsumerState<LanguageLearningScreen>
     return Scaffold(
       backgroundColor: const Color(0xFF2D2D2D),
       body: SafeArea(
-        child:
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.close_sharp,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              Container(child:
-              new LinearPercentIndicator(
-                width: 250.0,
-                lineHeight: 8.0,
-                percent: 0.2,
-                backgroundColor: Colors.white,
-                progressColor: Colors.blue,
-                barRadius: Radius.circular(10.0),
-                animation: true,
-                animationDuration: 1000,
-                curve: Curves.easeInOut,
-                animateFromLastPercent: true,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 41,
 
+              child: navbar(progress:widget.progress) ,
+            ),
 
-              ),
-              ),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.grid_view,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-            ],
-          ),
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Complete the sentence',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                ],
-              ),
-
-              const SizedBox(height: 60),
-
-              // Main content area
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Hindi sentence with blank
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Column(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            // crossAxisAlignment: CrossAxisAlignment.baseline,
-                            // textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Column(
-                                children: [
-                                  // Text(
-                                  //   'main',
-                                  //   style: TextStyle(
-                                  //     color: Colors.grey[400],
-                                  //     fontSize: 16,
-                                  //   ),
-                                  // ),
-                                   Text(
-                                    question[0]['dash_question'],
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                              // const SizedBox(width: 10),
-                              // // Blank space
-                              // Container(
-                              //   width: 80,
-                              //   height: 3,
-                              //   // margin: const EdgeInsets.symmetric(horizontal: 10),
-                              //   margin: const EdgeInsets.only(top: 34.0),
-                              //   decoration: BoxDecoration(
-                              //     color: Colors.white,
-                              //     borderRadius: BorderRadius.circular(2),
-                              //   ),
-                              // ),
-                              // const SizedBox(width: 10),
-                              // Column(
-                              //   crossAxisAlignment: CrossAxisAlignment.start,
-                              //   children: [
-                              //     // Text(
-                              //     //   'hoon',
-                              //     //   style: TextStyle(
-                              //     //     color: Colors.grey[400],
-                              //     //     fontSize: 16,
-                              //     //   ),
-                              //     // ),
-                              //     const Text(
-                              //       'my house.gone hi gi shaui jhdwub wjhe7',
-                              //       style: TextStyle(
-                              //         color: Colors.white,
-                              //         fontSize: 22,
-                              //         fontWeight: FontWeight.w400,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-                          Text(
-                            question[0]['meaning'],
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
+                    const Text(
+                      'Complete the sentence',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
+
                   ],
                 ),
-              ),
 
-              // Answer options
-              Column(
-                children: [
-                  _buildAnswerOption(question[0]['option_list'][0],question[0]['option_list'][0]),
-                  const SizedBox(height: 12),
-                  _buildAnswerOption(question[0]['option_list'][1],  question[0]['option_list'][1]),
-                ],
-              ),
+                const SizedBox(height: 60),
 
-              const SizedBox(height: 30),
+                // Main content area
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Hindi sentence with blank
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Column(
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              // crossAxisAlignment: CrossAxisAlignment.baseline,
+                              // textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Column(
+                                  children: [
+                                    // Text(
+                                    //   'main',
+                                    //   style: TextStyle(
+                                    //     color: Colors.grey[400],
+                                    //     fontSize: 16,
+                                    //   ),
+                                    // ),
+                                     Text(
+                                      question[0]['dash_question'],
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
 
-              // Check button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: selectedAnswer != null ? _checkAnswer : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedAnswer != null
-                        ? const Color(0xFF4CAF50)
-                        : const Color(0xFF5A5A5A),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
+                                  ],
+                                ),
+                                // const SizedBox(width: 10),
+                                // // Blank space
+                                // Container(
+                                //   width: 80,
+                                //   height: 3,
+                                //   // margin: const EdgeInsets.symmetric(horizontal: 10),
+                                //   margin: const EdgeInsets.only(top: 34.0),
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.white,
+                                //     borderRadius: BorderRadius.circular(2),
+                                //   ),
+                                // ),
+                                // const SizedBox(width: 10),
+                                // Column(
+                                //   crossAxisAlignment: CrossAxisAlignment.start,
+                                //   children: [
+                                //     // Text(
+                                //     //   'hoon',
+                                //     //   style: TextStyle(
+                                //     //     color: Colors.grey[400],
+                                //     //     fontSize: 16,
+                                //     //   ),
+                                //     // ),
+                                //     const Text(
+                                //       'my house.gone hi gi shaui jhdwub wjhe7',
+                                //       style: TextStyle(
+                                //         color: Colors.white,
+                                //         fontSize: 22,
+                                //         fontWeight: FontWeight.w400,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                              ],
+                            ),
+                            const SizedBox(height: 30),
+                            Text(
+                              question[0]['meaning'],
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'CHECK',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
+                ),
+
+                // Answer options
+                Column(
+                  children: [
+                    _buildAnswerOption(question[0]['option_list'][0],question[0]['option_list'][0]),
+                    const SizedBox(height: 12),
+                    _buildAnswerOption(question[0]['option_list'][1],  question[0]['option_list'][1]),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+
+                // Check button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: selectedAnswer != null ? _checkAnswer : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedAnswer != null
+                          ? const Color(0xFF4CAF50)
+                          : const Color(0xFF5A5A5A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'CHECK',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+          ],
+        )
       ),
     );
   }

@@ -1,11 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hi/Setting/SettingUi.dart';
-import 'package:hi/features/auth/provider/User_provider.dart';
-import 'package:hi/pages/helpprofile.dart';
-
-final avatoroo = 'assets/images/avator.png';
+import 'package:hi/Core/ProfileProvider.dart';
+import 'package:hi/utils/IconList.dart';
+import 'package:intl/intl.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -15,42 +13,41 @@ class Profile extends ConsumerStatefulWidget {
 }
 
 class _ProfileState extends ConsumerState<Profile> {
+  // Sample data - replace with your actual data
+  final String userName = "Johnson";
+  final String userLevel = "Premium Member";
+  final int totalExp = 1250;
+  final String speakingTime = "45h 30m";
+  final int currentStreak = 4;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-  }
-
-
-  final user_name = "";
+  // 7 days streak data (true = completed, false = not completed)
 
 
   @override
   Widget build(BuildContext context) {
+    print("Profile!!!!!!!!");
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
+      backgroundColor: const Color(0xFF1A1A1A),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Header
+              // Header Profile Card
               _buildProfileHeader(),
-              const SizedBox(height: 30),
+              const SizedBox(height: 24),
 
-              // Stats Grid (2x2)
-              _buildStatsGrid(),
-              const SizedBox(height: 40),
+              // Speaking Streak Section
+              _buildSpeakingStreak(),
+              const SizedBox(height: 24),
 
-              // Weekly Progress Section
-             WeeklyProgressChart(),
-              const SizedBox(height: 40),
+              // My Achievements Section
+              _buildAchievements(),
+              const SizedBox(height: 24),
 
-              // Recent Achievements Section
-              _buildRecentAchievements(),
+              // Statistics Section
+              _buildStatistics(),
             ],
           ),
         ),
@@ -60,142 +57,138 @@ class _ProfileState extends ConsumerState<Profile> {
 
   Widget _buildProfileHeader() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
+        color: const Color(0xFF2D2D30),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          // Profile Image Placeholder
+          // Avatar
           Container(
-            width: 50,
-            height: 50,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              color: const Color(0xFF3A3A3C),
-              // borderRadius: BorderRadius.circular(25),
+              color: const Color(0xFF6C5CE7),
+              borderRadius: BorderRadius.circular(40),
             ),
-            child: Image.asset(avatoroo,width: 40,height: 30,fit: BoxFit.cover,),
+            child: const Icon(
+              Icons.person,
+              size: 40,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 16),
 
-          // Profile Info
+          // User Info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Consumer(builder: (context,ref,chld){
-                  final user_name = ref.watch(UserDetails).username;
-                  return  Text(
-                    user_name,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  );
-                }),
-
+                Text(
+                  userName,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
+                Text(
+                  userLevel,
+                  style: TextStyle(
+                    color: Colors.yellow[400],
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.star,
-                      color: Color(0xFFFFCC02),
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Premium Member',
-                      style: TextStyle(
-                        color: Color(0xFFFFCC02),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    Consumer(
+                        builder: (context,ref,child){
+                      final totalcoin = ref.watch(ProfileProvider.select((state)=>state.coin));
+                    return   _buildStatItem('XP', totalcoin.toString(), AppIcon.xp);
+                    }),
+                    const SizedBox(width: 24),
+                    Consumer(
+                        builder: (context,ref,child){
+                          final time = ref.watch(ProfileProvider.select((state)=>state.Speaking_time));
+                          var actualtime = time < 60 ? time: "1h:${time-60}";
+                          var correcttime = '${actualtime}m';
+                          return   _buildStatItem('Speaking Time', correcttime,AppIcon.time);
+                        }),
                   ],
                 ),
               ],
             ),
           ),
 
-          // Arrow Icon
-
-          GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>Setting()));
-            },
-            child:Icon(
+          // Settings Icon
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C5CE7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
               Icons.settings,
-              color: Color(0xFF8E8E93),
+              color: Colors.white,
               size: 24,
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatItem(String label, String value, String texticon) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Row(
           children: [
-            Expanded(
-              child: _buildStatCard(
-                icon: Icons.schedule,
-                iconColor: const Color(0xFF007AFF),
-                label: 'Today',
-                value: '4h 25m',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                icon: Icons.local_fire_department,
-                iconColor: const Color(0xFFFF3B30),
-                label: 'Streak',
-                value: '15 Days',
+           Text(texticon,style: TextStyle(fontSize: 22),),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 12,
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                icon: Icons.trending_up,
-                iconColor: const Color(0xFF34C759),
-                label: 'Progress',
-                value: '80%',
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                icon: Icons.emoji_events,
-                iconColor: const Color(0xFFFFCC02),
-                label: 'XP',
-                value: '2,450',
-              ),
-            ),
-          ],
-        ),
+        )
+
       ],
     );
   }
 
-  Widget _buildStatCard({
-    required IconData icon,
-    required Color iconColor,
-    required String label,
-    required String value,
-  }) {
+  Widget _buildSpeakingStreak() {
+    DateTime now =  DateTime.now();
+    DateTime currentDate  = DateTime(now.year,now.month, now.day);
+    String monthname = DateFormat.MMM().format(now);
+    String dayname = DateFormat.EEEEE().format(now);
+
+    print(dayname);
+    // final int currentStreak = 4;
+
+    final List<bool> streakData = [true, true, true, true, true, false, false];
+    final List<String> weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
+        color: const Color(0xFF2D2D30),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -203,180 +196,242 @@ class _ProfileState extends ConsumerState<Profile> {
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor, size: 25),
+              const Icon(
+                Icons.local_fire_department,
+                color: Colors.orange,
+                size: 28,
+              ),
               const SizedBox(width: 8),
+              const Text(
+                'Speaking Streak',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
               Text(
-                label,
+                '$currentStreak',
                 style: const TextStyle(
-                  color: Color(0xFF8E8E93),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+            'Today • ${monthname} ${currentDate.day} • $currentStreak of 7',
+            // 'Today  ',
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
             ),
+          ),
+          const SizedBox(height: 20),
+
+          // 7 Days Streak Circles
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(7, (index) {
+              return Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  // color: streakData[index]
+                  color: currentStreak-1 >= index
+                      ? const Color(0xFF6C5CE7)
+                      : Colors.grey[600],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    weekDays[index],
+                    style: TextStyle(
+                      color: currentStreak-1 >= index ? Colors.white : Colors.grey[400],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              );
+            }),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWeeklyProgress() {
+  Widget _buildAchievements() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'My Achievements',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildAchievementItem(
+              Icons.wb_sunny,
+              'Early Speaker',
+              Colors.orange,
+              true,
+            ),
+            _buildAchievementItem(
+              Icons.check_circle,
+              'Daily Goal',
+              Colors.blue,
+              true,
+            ),
+            _buildAchievementItem(
+              Icons.emoji_events,
+              'Perfect Week',
+              Colors.purple,
+              true,
+            ),
+            _buildAchievementItem(
+              Icons.lock,
+              'Locked',
+              Colors.grey,
+              false,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAchievementItem(
+      IconData icon,
+      String title,
+      Color color,
+      bool isUnlocked,
+      ) {
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: isUnlocked ? color.withOpacity(0.2) : Colors.grey[800],
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: isUnlocked ? color : Colors.grey[600]!,
+              width: 2,
+            ),
+          ),
+          child: Icon(
+            icon,
+            color: isUnlocked ? color : Colors.grey[600],
+            size: 28,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: TextStyle(
+            color: isUnlocked ? Colors.white : Colors.grey[600],
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatistics() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
+        color: const Color(0xFF2D2D30),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Speaking Statistics',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'This Week',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
           const Text(
-            'Weekly Progress',
+            'Focus Distribution',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 24),
-          WeeklyProgressChart(),
-          // Chart Area
+          const SizedBox(height: 16),
 
+          _buildStatisticsItem('Conversation', '45%', const Color(0xFF6C5CE7)),
+          const SizedBox(height: 12),
+          _buildStatisticsItem('Pronunciation', '32%', const Color(0xFF00D4AA)),
+          const SizedBox(height: 12),
+          _buildStatisticsItem('Grammar', '23%', const Color(0xFFFFC107)),
         ],
       ),
     );
   }
 
-  Widget _buildBarChart(String day, double hours) {
-    // Normalize height (max 8 hours = 80px)
-    double barHeight = (hours / 8.0) * 80;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
+  Widget _buildStatisticsItem(String title, String percentage, Color color) {
+    return Row(
       children: [
-        // Y-axis labels (shown only on first bar for reference)
-        if (day == 'Mo') ...[
-          const SizedBox(height: 20),
-          Column(
-            children: [
-              Text('8', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 10)),
-              SizedBox(height: 8),
-              Text('6', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 10)),
-              SizedBox(height: 8),
-              Text('4', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 10)),
-              SizedBox(height: 8),
-              Text('2', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 10)),
-              SizedBox(height: 8),
-              Text('0', style: TextStyle(color: Color(0xFF8E8E93), fontSize: 10)),
-            ],
-          ),
-        ] else ...[
-          const SizedBox(height: 80),
-        ],
-
-        // Bar
         Container(
-          width: 20,
-          height: barHeight,
+          width: 12,
+          height: 12,
           decoration: BoxDecoration(
-            color: const Color(0xFF7C3AED),
-            borderRadius: BorderRadius.circular(4),
+            color: color,
+            borderRadius: BorderRadius.circular(6),
           ),
         ),
-        const SizedBox(height: 8),
-
-        // Day label
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+        ),
         Text(
-          day,
-          style: const TextStyle(
-            color: Color(0xFF8E8E93),
-            fontSize: 12,
+          percentage,
+          style: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ),
       ],
     );
   }
-
-  Widget _buildRecentAchievements() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2E),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Recent Achievements',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          _buildAchievementItem(
-            icon: Icons.emoji_events,
-            iconColor: const Color(0xFFFFCC02),
-            title: 'Study Master',
-            subtitle: 'Completed 50 hours',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAchievementItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: iconColor,
-          size: 24,
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: Color(0xFF8E8E93),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }
-

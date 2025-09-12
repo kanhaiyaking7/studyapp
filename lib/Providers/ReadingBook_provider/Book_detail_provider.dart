@@ -30,6 +30,7 @@ class Book {
   final double rating;
   final String category;
   final String coverUrl;
+  final String bookid;
 
   Book({
     required this.id,
@@ -38,6 +39,8 @@ class Book {
     required this.rating,
     required this.category,
     required this.coverUrl,
+    required this.bookid
+
   });
 
   factory Book.fromJson(Map<String, dynamic> json) {
@@ -48,6 +51,7 @@ class Book {
       rating: (json['rating'] as num).toDouble(),
       category: json['category'] ?? '',
       coverUrl: json['cover_url'] ?? '',
+      bookid: json['bookid'] ?? '',
     );
   }
 }

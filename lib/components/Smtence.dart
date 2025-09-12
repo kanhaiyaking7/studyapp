@@ -6,13 +6,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:hi/components/navbarcomponent.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Sentence extends ConsumerStatefulWidget{
   final Function onNext;
+  final dynamic data;
+  final int progress;
+  final Function incorrectAns;
+
   // final String data;
  const Sentence({required this.onNext,
-   // required this.data
+   required this.data,
+   required this.progress,
+   required this.incorrectAns
  });
   @override
   ConsumerState<Sentence> createState() => _SentenceState();
@@ -25,13 +32,13 @@ class _SentenceState extends ConsumerState<Sentence> {
 
  late List<Map<dynamic,dynamic>> Sentence_quiz = [
     {
-      'hindi_question': unique_sentence[0]['hind_Sentence'],
-      'options':[unique_sentence[0]['english_sentence'][0].toString()  ,
-        unique_sentence[0]['english_sentence'][1].toString(),
-        unique_sentence[0]['english_sentence'][2].toString()],
+      'hindi_question': unique_sentence['hind_Sentence'],
+      'options':[unique_sentence['english_sentence'][0].toString()  ,
+        unique_sentence['english_sentence'][1].toString(),
+        unique_sentence['english_sentence'][2].toString()],
       // ['This book is good.','I like food.',
       //   'He is very cute.','I bought a new toy.'],
-      'correct_ans':unique_sentence[0]['corr_sentence']
+      'correct_ans':unique_sentence['corr_sentence']
 
     },
   ];
@@ -55,10 +62,10 @@ class _SentenceState extends ConsumerState<Sentence> {
     super.initState();
     _speak();
 
-    final data =  ref.read(Path_data).data;
-    info = data;
-    var extract_data = info['choose_correct_sentence'];
-    unique_sentence= extract_data;
+    // final data =  ref.read(Path_data).data;
+    // info = data;
+    // var extract_data = info['choose_correct_sentence'];
+    unique_sentence= widget.data;
 
   }
 
@@ -78,52 +85,11 @@ class _SentenceState extends ConsumerState<Sentence> {
           child: Column(
             children: [
               // question 4/20 and time 18:45
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.close_sharp,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  Container(child:
-                  new LinearPercentIndicator(
-                    width: 250.0,
-                    lineHeight: 8.0,
-                    percent: 0.2,
-                    backgroundColor: Colors.white,
-                    progressColor: Colors.blue,
-                    barRadius: Radius.circular(10.0),
-                    animation: true,
-                    animationDuration: 1000,
-                    curve: Curves.easeInOut,
-                    animateFromLastPercent: true,
+              Container(
+                width: double.infinity,
+                height: 41,
 
-
-                  ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.grid_view,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
+                child: navbar(progress:widget.progress) ,
               ),
               // Header
 
@@ -379,6 +345,10 @@ class _SentenceState extends ConsumerState<Sentence> {
       widget.onNext();
     }
     else{
+
+      widget.incorrectAns();
+
+
 
       
       showDialog(

@@ -255,34 +255,41 @@ class _StatePageState extends ConsumerState<StatePage> {
                             height: 1.43,
                           ),
                         ),
-                        Row(
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 6,
 
-                          children: [
-                            new LinearPercentIndicator(
-                              width: 100.0,
-                              lineHeight: 6.0,
-                              percent: 0.7,
-                              backgroundColor: Colors.white,
-                              progressColor: Colors.blue,
-                              barRadius: Radius.circular(10.0),
-                              animation: true,
-                              animationDuration: 1000,
-                              curve: Curves.easeInOut,
-                              animateFromLastPercent: true,
+                          child:  Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+
+                            children: [
+                              new LinearPercentIndicator(
+                                width: 100.0,
+                                lineHeight: 6.0,
+                                percent: 0.7,
+                                backgroundColor: Colors.white,
+                                progressColor: Colors.blue,
+                                barRadius: Radius.circular(10.0),
+                                animation: true,
+                                animationDuration: 1000,
+                                curve: Curves.easeInOut,
+                                animateFromLastPercent: true,
 
 
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              scenario['duration'],
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color:Colors.white
                               ),
-                            ),
+                              const SizedBox(height: 8),
+                              Text(
+                                scenario['duration'],
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color:Colors.white
+                                ),
+                              ),
 
-                          ],
+                            ],
+                          ),
                         )
+
 
 
                       ],

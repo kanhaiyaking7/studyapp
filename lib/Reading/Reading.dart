@@ -13,8 +13,10 @@ const String bookcover = 'assets/images/bookcover.jpg';
 class Reading extends StatefulWidget {
   final content;
   final cover;
+  final  chaptercompleted;
+  final int chapter_no;
 
-  const Reading({required this.content,required this.cover});
+  const Reading({required this.content,required this.cover,required this.chaptercompleted,required this.chapter_no});
   @override
   _ReadingState createState() => _ReadingState();
 }
@@ -98,13 +100,13 @@ class _ReadingState extends State<Reading> {
 }
 
   Future _speak() async {
-print(contents[currentIndex].hindiText);
-print("___________");
+// print(contents[currentIndex].hindiText);
+// print("___________");
     await flutterTts.setLanguage("hi");
     await flutterTts.setPitch(1);
     await flutterTts.speak(contents[currentIndex].hindiText);
     await flutterTts.awaitSpeakCompletion(true);
-    print("LLLLLLLL");
+    // print("LLLLLLLL");
     // await  Future.delayed(const Duration(seconds: 1));
 
     _speakEnglish();
@@ -114,15 +116,15 @@ print("___________");
     await flutterTts.setLanguage("en");
     await flutterTts.setPitch(1);
     await flutterTts.speak(contents[currentIndex].englishText);
-    print("--------------");
-    print(currentIndex);
+    // print("--------------");
+    // print(currentIndex);
     setState(() {
       currentIndex++;
       if(currentIndex < contents.length - 1){
         _speak();
       }else{
         Navigator.pushReplacement(context,MaterialPageRoute(builder:
-            (_)=>ChapterCompletionScreen(cover:widget.cover)));
+            (_)=>ChapterCompletionScreen(cover:widget.cover,chaptercompleted:widget.chaptercompleted,chapter_no:widget.chapter_no)));
 
       }
 
@@ -134,7 +136,7 @@ print("___________");
 
   @override
   Widget build(BuildContext context) {
-     print(widget.content);
+     // print(widget.content);
     return Scaffold(
       backgroundColor: Color(0xFF1A1A1A),
       appBar: AppBar(
@@ -193,7 +195,11 @@ print("___________");
                     //     height: 190,
                     //     fit:BoxFit.fill
                     // ),
-                    Image.network(widget.cover.coverUrl,width: 340,height: 190,fit: BoxFit.fill,)
+                    Image.network(widget.cover.coverUrl,
+                      // width: 340,
+                      width: 200,
+                      height: 190,
+                      fit: BoxFit.fill,)
                     // Image.network(
                     //     'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/BookCover/images/bookcover1.jpg',
                     //   width: 340,

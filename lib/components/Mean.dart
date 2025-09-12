@@ -5,16 +5,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/path_provier/data_provider.dart';
+import 'package:hi/components/navbarcomponent.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class Mean extends ConsumerStatefulWidget{
 
   final Function onNext;
+  final dynamic data;
+  final int progress;
+  final Function incorrectAns;
   // final String data;
   const Mean({
     Key? key,
     required this.onNext,
-    // required this.data
+    required this.data,
+    required this.progress,
+    required this.incorrectAns
 
   }) : super(key: key);
 
@@ -45,7 +51,7 @@ class _MeanState extends ConsumerState<Mean> {
 
     await flutterTts.setLanguage("en");
     await flutterTts.setPitch(1.5);
-    await flutterTts.speak(Unique_word[0]['new_word']);
+    await flutterTts.speak(Unique_word['new_word']);
   }
 
   @override
@@ -53,12 +59,14 @@ class _MeanState extends ConsumerState<Mean> {
     // TODO: implement initState
     super.initState();
     _speak();
-   final data =  ref.read(Path_data).data;
-    info = data;
+   // final data =  ref.read(Path_data).data;
+   //  info = data;
+   //
+   //  var extract_data = info['Learn_newword'];
 
-    var extract_data = info['Learn_newword'];
-
-    Unique_word = extract_data;
+    Unique_word = widget.data;
+    print(widget.data);
+    print("sucess");
   }
 
 
@@ -79,54 +87,61 @@ class _MeanState extends ConsumerState<Mean> {
         child: SafeArea(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.close_sharp,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  Container(
-                      child:
-                  new LinearPercentIndicator(
-                    width: 250.0,
-                    lineHeight: 8.0,
-                    percent: 0.2,
-                    backgroundColor: Colors.white,
-                    progressColor: Colors.blue,
-                    barRadius: Radius.circular(10.0),
-                    animation: true,
-                    animationDuration: 1000,
-                    curve: Curves.easeInOut,
-                    animateFromLastPercent: true,
+              Container(
+                width: double.infinity,
+                height: 41,
 
-
-                  ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.grid_view,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
+                child: navbar(progress:widget.progress) ,
               ),
+
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Container(
+              //       width: 40,
+              //       height: 40,
+              //       // decoration: BoxDecoration(
+              //       //   color: Colors.white.withOpacity(0.2),
+              //       //   borderRadius: BorderRadius.circular(20),
+              //       // ),
+              //       child: const Icon(
+              //         Icons.close_sharp,
+              //         color: Colors.white,
+              //         size: 24,
+              //       ),
+              //     ),
+              //     Container(
+              //         child:
+              //     new LinearPercentIndicator(
+              //       width: 250.0,
+              //       lineHeight: 8.0,
+              //       percent: 0.2,
+              //       backgroundColor: Colors.white,
+              //       progressColor: Colors.blue,
+              //       barRadius: Radius.circular(10.0),
+              //       animation: true,
+              //       animationDuration: 1000,
+              //       curve: Curves.easeInOut,
+              //       animateFromLastPercent: true,
+              //
+              //
+              //     ),
+              //     ),
+              //     Container(
+              //       width: 40,
+              //       height: 40,
+              //       decoration: BoxDecoration(
+              //         color: Colors.white.withOpacity(0.2),
+              //         borderRadius: BorderRadius.circular(20),
+              //       ),
+              //       child: const Icon(
+              //         Icons.grid_view,
+              //         color: Colors.white,
+              //         size: 24,
+              //       ),
+              //     ),
+              //   ],
+              // ),
               // Header
               // _buildHeader(screenWidth),
 
@@ -216,7 +231,7 @@ class _MeanState extends ConsumerState<Mean> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    Unique_word[0]['new_word'],
+                    Unique_word['new_word'],
                     style: TextStyle(
                       fontSize: 28,
                       color: Color(0xFF4A5568),
@@ -226,7 +241,7 @@ class _MeanState extends ConsumerState<Mean> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    Unique_word[0]['hindi_mean'],
+                    Unique_word['hindi_mean'],
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 17,
@@ -260,9 +275,9 @@ class _MeanState extends ConsumerState<Mean> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSentenceItem(Unique_word[0]['Sentence'][0]),
+              _buildSentenceItem(Unique_word['Sentence'][0]),
               SizedBox(height: 15),
-              _buildSentenceItem(Unique_word[0]['Sentence'][1]),
+              _buildSentenceItem(Unique_word['Sentence'][1]),
               // SizedBox(height: 15),
               //
               // _buildSentenceItem(Unique_word[0]['Sentence'][2]),

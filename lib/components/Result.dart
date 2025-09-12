@@ -3,28 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Providers/path_provier/Current_Level.dart';
 import 'package:hi/Providers/path_provier/Quiz_provider.dart';
+import 'package:hi/utils/IconList.dart';
 
 class Result extends ConsumerStatefulWidget {
-  final int xpEarned;
+  // final int xpEarned;
   final int coinsEarned;
   final Duration timeTaken;
-  final double accuracy;
+  // final double accuracy;
   final int correctAnswers;
   final int totalQuestions;
   final VoidCallback? onContinue;
   final VoidCallback? onReview;
 
+  final int xpearn;
+  final int perfectaccuracy;
+
 
   const Result({
     Key? key,
-    this.xpEarned = 150,
+    // this.xpEarned = 150,
     this.coinsEarned = 25,
     this.timeTaken = const Duration(minutes: 0, seconds: 35),
-    this.accuracy = 85.0,
+
     this.correctAnswers = 8,
     this.totalQuestions = 10,
     this.onContinue,
     this.onReview,
+   required this.xpearn,
+     required this.perfectaccuracy
   }) : super(key: key);
 
   @override
@@ -45,6 +51,10 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
   late Animation<int> _coinCountAnimation;
   late Animation<double> _accuracyProgressAnimation;
   late Animation<double> _celebrationAnimation;
+
+ late int xpEarned = widget.xpearn;
+
+  late int accuracy = widget.perfectaccuracy;
 
   @override
   void initState() {
@@ -111,7 +121,7 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
 
     _xpCountAnimation = IntTween(
       begin: 0,
-      end: widget.xpEarned,
+      end: xpEarned,
     ).animate(CurvedAnimation(
       parent: _xpAnimationController,
       curve: Curves.easeOutBack,
@@ -119,19 +129,19 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
 
     _coinCountAnimation = IntTween(
       begin: 0,
-      end: widget.coinsEarned,
+      end: accuracy,
     ).animate(CurvedAnimation(
       parent: _coinAnimationController,
       curve: Curves.bounceOut,
     ));
-
-    _accuracyProgressAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.accuracy / 100,
-    ).animate(CurvedAnimation(
-      parent: _accuracyAnimationController,
-      curve: Curves.easeOutCubic,
-    ));
+    //
+    // _accuracyProgressAnimation = Tween<double>(
+    //   begin: 0.0,
+    //   end: accuracy ,
+    // ).animate(CurvedAnimation(
+    //   parent: _accuracyAnimationController,
+    //   curve: Curves.easeOutCubic,
+    // ));
 
     _celebrationAnimation = Tween<double>(
       begin: 0.0,
@@ -189,17 +199,17 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
   }
 
   String get _performanceMessage {
-    if (widget.accuracy >= 90) return "Excellent work! 🎉";
-    if (widget.accuracy >= 80) return "Great job! 👏";
-    if (widget.accuracy >= 70) return "Good effort! 👍";
-    if (widget.accuracy >= 60) return "Keep practicing! 💪";
+    if (accuracy >= 90) return "Excellent work! 🎉";
+    if (accuracy >= 80) return "Great job! 👏";
+    if (accuracy >= 70) return "Good effort! 👍";
+    if (accuracy >= 60) return "Keep practicing! 💪";
     return "Don't give up! 📚";
   }
 
   Color get _performanceColor {
-    if (widget.accuracy >= 90) return Colors.green;
-    if (widget.accuracy >= 80) return Colors.blue;
-    if (widget.accuracy >= 70) return Colors.orange;
+    if (accuracy >= 90) return Colors.green;
+    if (accuracy >= 80) return Colors.blue;
+    if (accuracy >= 70) return Colors.orange;
     return Colors.red;
   }
 
@@ -207,6 +217,29 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1a1a1a),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF1A1A1A),
+        elevation: 0,
+        title: Text(
+          "Quiz Result",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close, color: Colors.white),
+            onPressed: () {},
+          ),
+        ],
+      ),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _mainAnimationController,
@@ -255,7 +288,7 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(
             Icons.close,
-            color: Colors.white,
+            color: Colors.black,
             size: 24,
           ),
         ),
@@ -263,16 +296,17 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
           'Quiz Results',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 25,
             fontWeight: FontWeight.w600,
           ),
         ),
         IconButton(
           onPressed: () {},
           icon: const Icon(
-            Icons.share,
+            // Icons.share,
+            Icons.close,
             color: Colors.white,
-            size: 24,
+            size: 25,
           ),
         ),
       ],
@@ -301,7 +335,7 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
                   shape: BoxShape.circle,
                 ),
                 child: Text(
-                  widget.accuracy >= 80 ?  '🎉': '👏',
+                  accuracy >= 80 ?  '🎉': '👏',
                   style: TextStyle(
                     fontSize: 80,
 
@@ -356,21 +390,22 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.blue,
-            // gradient: const LinearGradient(
-            //   colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
-            //   begin: Alignment.topLeft,
-            //   end: Alignment.bottomRight,
-            // ),
+            // color: Colors.blue,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF6366f1), Color(0xFF8b5cf6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             children: [
-              const Icon(
-                Icons.electric_bolt_outlined,
-                color: Colors.white,
-                size: 28,
-              ),
+              Text(AppIcon.xp,style: TextStyle(fontSize: 28),),
+              // const Icon(
+              //   Icons.electric_bolt_outlined,
+              //   color: Colors.white,
+              //   size: 28,
+              // ),
               const SizedBox(height: 8),
               Text(
                 '+${_xpCountAnimation.value}',
@@ -481,60 +516,60 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildAccuracySection() {
-    return AnimatedBuilder(
-      animation: _accuracyProgressAnimation,
-      builder: (context, child) {
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: const Color(0xFF2a2a2a),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _performanceColor.withOpacity(0.3),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Accuracy',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '${(widget.accuracy * _accuracyProgressAnimation.value).round()}%',
-                    style: TextStyle(
-                      color: _performanceColor,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: _accuracyProgressAnimation.value,
-                  backgroundColor: Colors.grey[700],
-                  valueColor: AlwaysStoppedAnimation<Color>(_performanceColor),
-                  minHeight: 8,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buildAccuracySection() {
+  //   return AnimatedBuilder(
+  //     animation: _accuracyProgressAnimation,
+  //     builder: (context, child) {
+  //       return Container(
+  //         width: double.infinity,
+  //         padding: const EdgeInsets.all(24),
+  //         decoration: BoxDecoration(
+  //           color: const Color(0xFF2a2a2a),
+  //           borderRadius: BorderRadius.circular(16),
+  //           border: Border.all(
+  //             color: _performanceColor.withOpacity(0.3),
+  //             width: 1,
+  //           ),
+  //         ),
+  //         child: Column(
+  //           children: [
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 const Text(
+  //                   'Accuracy',
+  //                   style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   '${(accuracy * _accuracyProgressAnimation.value).round()}%',
+  //                   style: TextStyle(
+  //                     color: _performanceColor,
+  //                     fontSize: 24,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 16),
+  //             ClipRRect(
+  //               borderRadius: BorderRadius.circular(10),
+  //               child: LinearProgressIndicator(
+  //                 value: _accuracyProgressAnimation.value,
+  //                 backgroundColor: Colors.grey[700],
+  //                 valueColor: AlwaysStoppedAnimation<Color>(_performanceColor),
+  //                 minHeight: 8,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildPerformanceMessage() {
     return Container(
@@ -630,90 +665,90 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
   }
 }
 
-// Demo app to showcase the Result widget
-class ResultDemo extends StatelessWidget {
-  const ResultDemo({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Quiz Result Demo',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF1a1a1a),
-      ),
-      home: Scaffold(
-        backgroundColor: const Color(0xFF1a1a1a),
-        appBar: AppBar(
-          title: const Text('Quiz App - Result Demo'),
-          backgroundColor: const Color(0xFF2a2a2a),
-          elevation: 0,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Quiz Results Demo',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Result(
-                        xpEarned: 180,
-                        coinsEarned: 35,
-                        timeTaken: Duration(minutes: 3, seconds: 42),
-                        accuracy: 92.5,
-                        correctAnswers: 9,
-                        totalQuestions: 10,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.celebration),
-                label: const Text('Excellent Result (92%)'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Result(
-                        xpEarned: 120,
-                        coinsEarned: 18,
-                        timeTaken: Duration(minutes: 4, seconds: 15),
-                        accuracy: 65.0,
-                        correctAnswers: 6,
-                        totalQuestions: 10,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.emoji_events),
-                label: const Text('Average Result (65%)'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// // Demo app to showcase the Result widget
+// class ResultDemo extends StatelessWidget {
+//   const ResultDemo({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Quiz Result Demo',
+//       theme: ThemeData.dark().copyWith(
+//         scaffoldBackgroundColor: const Color(0xFF1a1a1a),
+//       ),
+//       home: Scaffold(
+//         backgroundColor: const Color(0xFF1a1a1a),
+//         appBar: AppBar(
+//           title: const Text('Quiz App - Result Demo'),
+//           backgroundColor: const Color(0xFF2a2a2a),
+//           elevation: 0,
+//         ),
+//         body: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               const Text(
+//                 'Quiz Results Demo',
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 24,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//               const SizedBox(height: 32),
+//               ElevatedButton.icon(
+//                 onPressed: () {
+//                   Navigator.push(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (context) => const Result(
+//                         xpEarned: 180,
+//                         coinsEarned: 35,
+//                         timeTaken: Duration(minutes: 3, seconds: 42),
+//                         accuracy: 92.5,
+//                         correctAnswers: 9,
+//                         totalQuestions: 10,
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 icon: const Icon(Icons.celebration),
+//                 label: const Text('Excellent Result (92%)'),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: Colors.green,
+//                   foregroundColor: Colors.white,
+//                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//               ElevatedButton.icon(
+//                 onPressed: () {
+//                   Navigator.push(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (context) => const Result(
+//                         xpEarned: 120,
+//                         coinsEarned: 18,
+//                         timeTaken: Duration(minutes: 4, seconds: 15),
+//                         accuracy: 65.0,
+//                         correctAnswers: 6,
+//                         totalQuestions: 10,
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 icon: const Icon(Icons.emoji_events),
+//                 label: const Text('Average Result (65%)'),
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: Colors.orange,
+//                   foregroundColor: Colors.white,
+//                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

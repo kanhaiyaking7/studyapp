@@ -3,15 +3,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final BookData = FutureProvider<List>((ref) async {
-  
-  final output =await Supabase.instance.client.from('animal_advanture').select();
+final BookData = FutureProvider.family<List,String>((ref,value) async {
 
-var answer = (output as List).map((item) => Chapter.fromJson(item)).toList();
+      print(value);
+    final output = await Supabase.instance.client
+        .from(value)
+        .select();
+      print(output);
 
-print("+++++++++++");
-  return answer;
-      // .map((e)=>Chapter.fromJson(e)).toList();
+    var answer = (output as List)
+        .map((item) => Chapter.fromJson(item))
+        .toList();
+
+
+    return answer;
+
+
+
+
+  // .map((e)=>Chapter.fromJson(e)).toList();
 
   
 });
@@ -19,7 +29,7 @@ print("+++++++++++");
 
 
 class Chapter {
-  final String id;
+  final dynamic id;
   final String bookId;
   final String title;
   final int orderNo;
@@ -40,7 +50,7 @@ class Chapter {
         [];
 
     return Chapter(
-      id: json['id'] as String,
+      id: json['id'] as dynamic,
       bookId: json['book_id'] as String,
       title: json['title'] as String,
       orderNo: json['order_no'] as int,

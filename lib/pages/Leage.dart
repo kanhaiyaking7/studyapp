@@ -1,68 +1,74 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Core/ProfileProvider.dart';
+import 'package:hi/Providers/Champions/champions.dart';
+import 'package:hi/utils/IconList.dart';
+import 'package:hi/utils/Loadinggame.dart';
+import 'package:lottie/lottie.dart';
 
 final avatoroo = 'assets/images/avator.png';
 
-class Scoreboard extends StatefulWidget {
+class Scoreboard extends ConsumerStatefulWidget {
   const Scoreboard({Key? key}) : super(key: key);
 
   @override
-  State<Scoreboard> createState() => _ScoreboardState();
+  ConsumerState<Scoreboard> createState() => _ScoreboardState();
 }
 
-class _ScoreboardState extends State<Scoreboard> {
+class _ScoreboardState extends ConsumerState<Scoreboard> {
   String selectedCategory = 'Workout';
 
-  final List<Map<String,dynamic>> Players = [
-    {
-        'name': 'Regina Fly',
-        'streak': '23m',
-        'streakType': 'Workout streak',
-        'position': 1,
-        'avatar': Icons.person,
-        'isCurrentUser': false,
-    },
-    {
-      'name': 'Regina Fly',
-      'streak': '13m',
-      'streakType': 'Workout streak',
-      'position': 2,
-      'avatar': Icons.person,
-      'isCurrentUser': false,
-    },
-    {
-      'name': 'Regina Fly',
-      'streak': '03m',
-      'streakType': 'Workout streak',
-      'position': 3,
-      'avatar': Icons.person,
-      'isCurrentUser': false,
-    },
-    {
-      'name': 'Regina Fly',
-      'streak': '33m',
-      'streakType': 'Workout streak',
-      'position': 4,
-      'avatar': Icons.person,
-      'isCurrentUser': false,
-    },
-    {
-      'name': 'Regina Fly',
-      'streak': '45m',
-      'streakType': 'Workout streak',
-      'position': 5,
-      'avatar': Icons.woman,
-      'isCurrentUser': false,
-    },
-
-
-  ];
+  // final List<Map<String,dynamic>> Players = [
+  //   {
+  //       'name': 'Regina Fly',
+  //       'streak': '23m',
+  //       'streakType': 'Workout streak',
+  //       'position': 1,
+  //       'avatar': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Anastasia.png.webp',
+  //       'isCurrentUser': false,
+  //   },
+  //   {
+  //     'name': 'Regina Fly',
+  //     'streak': '13m',
+  //     'streakType': 'Workout streak',
+  //     'position': 2,
+  //     'avatar': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/farid.png.webp',
+  //     'isCurrentUser': false,
+  //   },
+  //   {
+  //     'name': 'Regina Fly',
+  //     'streak': '03m',
+  //     'streakType': 'Workout streak',
+  //     'position': 3,
+  //     'avatar': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/ivan_2.png.webp',
+  //     'isCurrentUser': false,
+  //   },
+  //   {
+  //     'name': 'Regina Fly',
+  //     'streak': '33m',
+  //     'streakType': 'Workout streak',
+  //     'position': 4,
+  //     'avatar': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Kostya.png.webp',
+  //     'isCurrentUser': false,
+  //   },
+  //   {
+  //     'name': 'Regina Fly',
+  //     'streak': '45m',
+  //     'streakType': 'Workout streak',
+  //     'position': 5,
+  //     'avatar': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Nikita.png.webp',
+  //     'isCurrentUser': false,
+  //   },
+  //
+  //
+  // ];
 final List<Map<String,dynamic>> Winners = [
   {
       'name': 'King',
       'position': 1,
-      'avatara': Icons.person,
+      'avatara': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Nikita.png.webp',
       'badgeColor': Colors.amber,
       'isWinner': true,
       'topp': 0,
@@ -70,7 +76,7 @@ final List<Map<String,dynamic>> Winners = [
   {
     'name': 'Alex\nFreedman',
     'position': 2,
-    'avatara': Icons.person,
+    'avatara': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/farid.png.webp',
     'badgeColor': Colors.grey,
     'isWinner': false,
     'topp': 40,
@@ -78,14 +84,17 @@ final List<Map<String,dynamic>> Winners = [
   {
     'name': 'Matthew\nApeter',
     'position': 3,
-    'avatara': Icons.person,
+    'avatara': 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/ivan_2.png.webp',
     'badgeColor': Colors.brown,
     'isWinner': false,
     'topp': 50,
   },
 ];
+
+
   @override
   Widget build(BuildContext context) {
+    final Learner = ref.watch(champions);
 
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
@@ -107,355 +116,364 @@ final List<Map<String,dynamic>> Winners = [
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(
+                // Icons.more_vert,
+              Icons.notifications,
+                color: Colors.yellow),
             onPressed: () {},
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Top 3 Podium Section
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              children: [
-                // Winners Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+      body:
+          Learner.when(
+              data: (players){
+             final winers = players.where((b)=>b.position < 4).toList();
+             List ee = players;
+              ee.sort((a,b)=>a.position.compareTo(b.position));
+             final champions = ee.toList();
+             // print(winers);
+                return  Column(
                   children: [
-                //     ListView.builder(
-                //       itemCount: Winners.length,
-                //         itemBuilder: (context,index){
-                //         return  _buildPodiumUser(
-                //           name: Winners[index]['name'],
-                //           position: Winners[index]['position'],
-                //           avatara: Winners[index]['avatara'],
-                //           badgeColor: Winners[index]['badgeColor'],
-                //           isWinner: Winners[index]['isWinner'],
-                //           topp: Winners[index]['topp'],
-                //         );
-                //
-                //
-                //     })
-                //     2nd Place
-                    _buildPodiumUser(
-                      name: Winners[1]['name'],
-                       position: Winners[1]['position'],
-                      avatara: Winners[1]['avatara'],
-                      badgeColor: Winners[1]['badgeColor'],
-                     isWinner: Winners[1]['isWinner'],
-                      topp: Winners[1]['topp'],
-
-                     ),
-                    const SizedBox(width: 15),
-                    // 1st Place (Winner)
-                    _buildPodiumUser(
-                      name: Winners[0]['name'],
-                      position: Winners[0]['position'],
-                      avatara: Winners[0]['avatara'],
-                      badgeColor: Winners[0]['badgeColor'],
-                      isWinner: Winners[0]['isWinner'],
-                      topp: Winners[0]['topp']
-                    ),
-                    const SizedBox(width: 15),
-                    // 3rd Place
-                    _buildPodiumUser(
-                      name: Winners[2]['name'],
-                      position: Winners[2]['position'],
-                      avatara:Winners[2]['avatara'],
-                      badgeColor: Winners[2]['badgeColor'],
-                      isWinner: Winners[2]['isWinner'],
-                      topp: Winners[2]['topp']
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-                // Podium Base
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // 2nd podium
+                    // Top 3 Podium Section
                     Container(
-                      width: 100,
-                      height: 90,
-                      decoration: const BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '2',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Column(
+                        children: [
+                          // Winners Row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              //     ListView.builder(
+                              //       itemCount: Winners.length,
+                              //         itemBuilder: (context,index){
+                              //         return  _buildPodiumUser(
+                              //           name: Winners[index]['name'],
+                              //           position: Winners[index]['position'],
+                              //           avatara: Winners[index]['avatara'],
+                              //           badgeColor: Winners[index]['badgeColor'],
+                              //           isWinner: Winners[index]['isWinner'],
+                              //           topp: Winners[index]['topp'],
+                              //         );
+                              //
+                              //
+                              //     })
+                              //     2nd Place
+                              _buildPodiumUser(
+                                name: winers[1].name,
+                                position: winers[1].position,
+                                avatar: winers[1].avatar,
+
+                              ),
+                              const SizedBox(width: 15),
+                              // 1st Place (Winner)
+                              _buildPodiumUser(
+                                name: winers[0].name,
+                                position: winers[0].position,
+                                avatar: winers[0].avatar,
+                              ),
+                              const SizedBox(width: 15),
+                              // 3rd Place
+                              _buildPodiumUser(
+                                name: winers[2].name,
+                                position: winers[2].position,
+                                avatar: winers[2].avatar,
+                              ),
+                            ],
                           ),
-                        ),
+
+                          const SizedBox(height: 20),
+                          // Podium Base
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // 2nd podium
+                              Container(
+                                width: 100,
+                                height: 90,
+                                decoration: const BoxDecoration(
+                                  color: Colors.orangeAccent,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '2',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // 1st podium (highest)
+                              Container(
+                                width: 100,
+                                height: 120,
+                                decoration: const BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '1',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // 3rd podium
+                              Container(
+                                width: 100,
+                                height: 40,
+                                decoration: const BoxDecoration(
+                                  color: Colors.orangeAccent,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '3',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    // 1st podium (highest)
-                    Container(
-                      width: 100,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // 3rd podium
-                    Container(
-                      width: 100,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '3',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
 
-          // Category Selector
-          // Container(
-          //   margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          //   child: Row(
-          //     children: [
-          //       Expanded(
-          //         child: GestureDetector(
-          //           onTap: () {
-          //             setState(() {
-          //               selectedCategory = 'Workout';
-          //             });
-          //           },
-          //           child: Container(
-          //             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          //             decoration: BoxDecoration(
-          //               color: selectedCategory == 'Workout'
-          //                   ? const Color(0xFF7CB342)
-          //                   : Colors.transparent,
-          //               borderRadius: BorderRadius.circular(25),
-          //               border: Border.all(
-          //                 color: selectedCategory == 'Workout'
-          //                     ? const Color(0xFF7CB342)
-          //                     : Colors.grey.shade600,
-          //                 width: 1,
-          //               ),
-          //             ),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: [
-          //                 Container(
-          //                   padding: const EdgeInsets.all(4),
-          //                   decoration: BoxDecoration(
-          //                     color: selectedCategory == 'Workout'
-          //                         ? Colors.white.withOpacity(0.2)
-          //                         : Colors.grey.shade700,
-          //                     shape: BoxShape.circle,
-          //                   ),
-          //                   child: Icon(
-          //                     Icons.fitness_center,
-          //                     color: selectedCategory == 'Workout'
-          //                         ? Colors.white
-          //                         : Colors.grey.shade400,
-          //                     size: 16,
-          //                   ),
-          //                 ),
-          //                 const SizedBox(width: 8),
-          //                 Text(
-          //                   'Workout',
-          //                   style: TextStyle(
-          //                     color: selectedCategory == 'Workout'
-          //                         ? Colors.white
-          //                         : Colors.grey.shade400,
-          //                     fontWeight: FontWeight.w500,
-          //                     fontSize: 14,
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       const SizedBox(width: 12),
-          //       // Expanded(
-          //       //   child: GestureDetector(
-          //       //     onTap: () {
-          //       //       setState(() {
-          //       //         selectedCategory = 'Cooking';
-          //       //       });
-          //       //     },
-          //       //     child: Container(
-          //       //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          //       //       decoration: BoxDecoration(
-          //       //         color: selectedCategory == 'Cooking'
-          //       //             ? const Color(0xFF7CB342)
-          //       //             : Colors.transparent,
-          //       //         borderRadius: BorderRadius.circular(25),
-          //       //         border: Border.all(
-          //       //           color: selectedCategory == 'Cooking'
-          //       //               ? const Color(0xFF7CB342)
-          //       //               : Colors.grey.shade600,
-          //       //           width: 1,
-          //       //         ),
-          //       //       ),
-          //       //       child: Row(
-          //       //         mainAxisAlignment: MainAxisAlignment.center,
-          //       //         children: [
-          //       //           Container(
-          //       //             padding: const EdgeInsets.all(4),
-          //       //             decoration: BoxDecoration(
-          //       //               color: selectedCategory == 'Cooking'
-          //       //                   ? Colors.white.withOpacity(0.2)
-          //       //                   : Colors.grey.shade700,
-          //       //               shape: BoxShape.circle,
-          //       //             ),
-          //       //             child: Icon(
-          //       //               Icons.restaurant,
-          //       //               color: selectedCategory == 'Cooking'
-          //       //                   ? Colors.white
-          //       //                   : Colors.grey.shade400,
-          //       //               size: 16,
-          //       //             ),
-          //       //           ),
-          //       //           const SizedBox(width: 8),
-          //       //           Text(
-          //       //             'Cooking',
-          //       //             style: TextStyle(
-          //       //               color: selectedCategory == 'Cooking'
-          //       //                   ? Colors.white
-          //       //                   : Colors.grey.shade400,
-          //       //               fontWeight: FontWeight.w500,
-          //       //               fontSize: 14,
-          //       //             ),
-          //       //           ),
-          //       //         ],
-          //       //       ),
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //     ],
-          //   ),
-          // ),
-
-          // All Users Section
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'ALL USERS',
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      Icon(
-                        Icons.tune,
-                        color: Colors.grey.shade500,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 15),
-
-                  // User List
-                  Expanded(
-                    child:
-                        ListView.builder(
-                           itemCount: Players.length,
-                            itemBuilder: (context,index){
-                             return _buildUserTile(
-                                 name: Players[index]['name'],
-                                 streak: Players[index]['streak'],
-                                 streakType: Players[index]['streakType'],
-                                 position: Players[index]['position'],
-                                 avatar: Players[index]['avatar'],
-                                 isCurrentUser: Players[index]['isCurrentUser']
-                             );
-                            }
-
-                        ),
-                    // ListView(
-                    //   children: [
-                    //     _buildUserTile(
-                    //       name: 'Regina Fly',
-                    //       streak: '2,3m',
-                    //       streakType: 'Workout streak',
-                    //       position: 1,
-                    //       avatar: Icons.person,
-                    //       isCurrentUser: false,
-                    //     ),
-                    //
-                    //     _buildUserTile(
-                    //       name: '(You) Emma Richa...',
-                    //       streak: '987k',
-                    //       streakType: 'Workout streak',
-                    //       position: 32,
-                    //       avatar: Icons.person,
-                    //       isCurrentUser: true,
-                    //     ),
-                    //   ],
+                    // Category Selector
+                    // Container(
+                    //   margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    //   child: Row(
+                    //     children: [
+                    //       Expanded(
+                    //         child: GestureDetector(
+                    //           onTap: () {
+                    //             setState(() {
+                    //               selectedCategory = 'Workout';
+                    //             });
+                    //           },
+                    //           child: Container(
+                    //             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    //             decoration: BoxDecoration(
+                    //               color: selectedCategory == 'Workout'
+                    //                   ? const Color(0xFF7CB342)
+                    //                   : Colors.transparent,
+                    //               borderRadius: BorderRadius.circular(25),
+                    //               border: Border.all(
+                    //                 color: selectedCategory == 'Workout'
+                    //                     ? const Color(0xFF7CB342)
+                    //                     : Colors.grey.shade600,
+                    //                 width: 1,
+                    //               ),
+                    //             ),
+                    //             child: Row(
+                    //               mainAxisAlignment: MainAxisAlignment.center,
+                    //               children: [
+                    //                 Container(
+                    //                   padding: const EdgeInsets.all(4),
+                    //                   decoration: BoxDecoration(
+                    //                     color: selectedCategory == 'Workout'
+                    //                         ? Colors.white.withOpacity(0.2)
+                    //                         : Colors.grey.shade700,
+                    //                     shape: BoxShape.circle,
+                    //                   ),
+                    //                   child: Icon(
+                    //                     Icons.fitness_center,
+                    //                     color: selectedCategory == 'Workout'
+                    //                         ? Colors.white
+                    //                         : Colors.grey.shade400,
+                    //                     size: 16,
+                    //                   ),
+                    //                 ),
+                    //                 const SizedBox(width: 8),
+                    //                 Text(
+                    //                   'Workout',
+                    //                   style: TextStyle(
+                    //                     color: selectedCategory == 'Workout'
+                    //                         ? Colors.white
+                    //                         : Colors.grey.shade400,
+                    //                     fontWeight: FontWeight.w500,
+                    //                     fontSize: 14,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       const SizedBox(width: 12),
+                    //       // Expanded(
+                    //       //   child: GestureDetector(
+                    //       //     onTap: () {
+                    //       //       setState(() {
+                    //       //         selectedCategory = 'Cooking';
+                    //       //       });
+                    //       //     },
+                    //       //     child: Container(
+                    //       //       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    //       //       decoration: BoxDecoration(
+                    //       //         color: selectedCategory == 'Cooking'
+                    //       //             ? const Color(0xFF7CB342)
+                    //       //             : Colors.transparent,
+                    //       //         borderRadius: BorderRadius.circular(25),
+                    //       //         border: Border.all(
+                    //       //           color: selectedCategory == 'Cooking'
+                    //       //               ? const Color(0xFF7CB342)
+                    //       //               : Colors.grey.shade600,
+                    //       //           width: 1,
+                    //       //         ),
+                    //       //       ),
+                    //       //       child: Row(
+                    //       //         mainAxisAlignment: MainAxisAlignment.center,
+                    //       //         children: [
+                    //       //           Container(
+                    //       //             padding: const EdgeInsets.all(4),
+                    //       //             decoration: BoxDecoration(
+                    //       //               color: selectedCategory == 'Cooking'
+                    //       //                   ? Colors.white.withOpacity(0.2)
+                    //       //                   : Colors.grey.shade700,
+                    //       //               shape: BoxShape.circle,
+                    //       //             ),
+                    //       //             child: Icon(
+                    //       //               Icons.restaurant,
+                    //       //               color: selectedCategory == 'Cooking'
+                    //       //                   ? Colors.white
+                    //       //                   : Colors.grey.shade400,
+                    //       //               size: 16,
+                    //       //             ),
+                    //       //           ),
+                    //       //           const SizedBox(width: 8),
+                    //       //           Text(
+                    //       //             'Cooking',
+                    //       //             style: TextStyle(
+                    //       //               color: selectedCategory == 'Cooking'
+                    //       //                   ? Colors.white
+                    //       //                   : Colors.grey.shade400,
+                    //       //               fontWeight: FontWeight.w500,
+                    //       //               fontSize: 14,
+                    //       //             ),
+                    //       //           ),
+                    //       //         ],
+                    //       //       ),
+                    //       //     ),
+                    //       //   ),
+                    //       // ),
+                    //     ],
+                    //   ),
                     // ),
-                  ),
-                ],
-              ),
-            ),
+
+                    // All Users Section
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'ALL USERS',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.tune,
+                                  color: Colors.grey.shade500,
+                                  size: 18,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
+
+                            // User List
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: champions.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildUserTile(
+                                          name: champions[index].name,
+                                          streak: champions[index].streak,
+                                          xp: champions[index].xp,
+                                          position: champions[index].position,
+                                          avatar: champions[index].avatar,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  // The second ListView will be positioned at the bottom.
+                                  // `shrinkWrap` is essential here to prevent overflow errors.
+                                  ListView(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(), // Recommended to avoid nested scrolling
+                                    children: [
+                                      Consumer(
+                                          builder: (context,ref,child){
+                                            final totalcoin = ref.watch(ProfileProvider);
+
+                                            return   _buildUserTile(
+                                              name: 'radhe',
+                                              streak: 55,
+                                              xp: 56,
+                                              position: -1,
+                                              avatar: 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Nikita.png.webp',
+                                            );
+                                          }),
+
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            error: (e,stack)=>Text('error$e'),
+            loading: ()=>Loadinggame()
           ),
-        ],
-      ),
+
+
     );
   }
 
   Widget _buildPodiumUser({
     required String name,
     required int position,
-    required IconData avatara,
-    required Color badgeColor,
-    required bool isWinner,
-    required int topp,
+    required String  avatar,
+
   }) {
 
     return Column(
@@ -465,8 +483,8 @@ final List<Map<String,dynamic>> Winners = [
           children: [
             Container(
 
-              width: isWinner ? 105 : 85,
-              height: isWinner ? 105 : 85,
+              width: position == 1 ? 105 : 85,
+              height: position == 1  ? 105 : 85,
               decoration: BoxDecoration(
                 color: const Color(0xFF4CAF50),
                 shape: BoxShape.circle,
@@ -475,12 +493,18 @@ final List<Map<String,dynamic>> Winners = [
                   width: 5,
                 ),
               ),
-              child: Image.asset(
-                avatoroo,
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
-              )
+              child:
+              CircleAvatar(
+                backgroundImage:NetworkImage(avatar),
+                // backgroundColor: Colors.red,
+              ),
+
+              // Image.asset(
+              //   avatoroo,
+              //   width: 90,
+              //   height: 90,
+              //   fit: BoxFit.cover,
+              // )
             ),
             // if (isWinner)
             //   Positioned(
@@ -501,7 +525,7 @@ final List<Map<String,dynamic>> Winners = [
             //       ),
             //     ),
             //   ),
-            if (!isWinner)
+            if (position != 1)
               Positioned(
                 bottom: -5,
                 right: -5,
@@ -509,7 +533,7 @@ final List<Map<String,dynamic>> Winners = [
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: badgeColor,
+                    // color: badgeColor,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -533,8 +557,8 @@ final List<Map<String,dynamic>> Winners = [
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
-            fontSize: isWinner ? 14 : 12,
-            fontWeight: isWinner ? FontWeight.w600 : FontWeight.w500,
+            fontSize: position == 1 ? 14 : 12,
+            fontWeight: position == 1 ? FontWeight.w600 : FontWeight.w500,
           ),
         ),
       ],
@@ -543,11 +567,11 @@ final List<Map<String,dynamic>> Winners = [
 
   Widget _buildUserTile({
     required String name,
-    required String streak,
-    required String streakType,
+    required int streak,
+    required int xp,
     required int position,
-    required IconData avatar,
-    required bool isCurrentUser,
+    required String avatar,
+    // required bool isCurrentUser,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -561,13 +585,20 @@ final List<Map<String,dynamic>> Winners = [
           Stack(
             children: [
               Container(
-                width: 50,
-                height: 50,
+                width: 60,
+                height: 55,
                 decoration: const BoxDecoration(
                   color: Color(0xFF4CAF50),
                   shape: BoxShape.circle,
                 ),
-                child:Image.asset(avatoroo,width: 40,height: 30,fit: BoxFit.cover,),
+                child:
+                    CircleAvatar(
+                      backgroundImage:NetworkImage(avatar),
+                      // backgroundColor: Colors.red,
+                    ),
+
+                // Image.asset(avatoroo,width: 40,height: 30,
+                //   fit: BoxFit.cover,),
                 // Icon(
                 //   avatar,
                 //   color: Colors.white,
@@ -615,20 +646,22 @@ final List<Map<String,dynamic>> Winners = [
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                // const SizedBox(height: 4),
                 Row(
                   children: [
                     Container(
-                      width: 6,
+
                       height: 6,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF7CB342),
-                        shape: BoxShape.circle,
-                      ),
+                      alignment: Alignment.topLeft,
+                      // decoration: const BoxDecoration(
+                      //   color: Color(0xFF7CB342),
+                      //   shape: BoxShape.circle,
+                      // ),
                     ),
-                    const SizedBox(width: 6),
+                    // const SizedBox(width: 6),
+                    Lottie.network('https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/lottie.json',height: 30,width: 20),
                     Text(
-                      streakType,
+                      streak.toString(),
                       style: TextStyle(
                         color: Colors.grey.shade400,
                         fontSize: 12,
@@ -643,20 +676,41 @@ final List<Map<String,dynamic>> Winners = [
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                streak,
+                xp.toString(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                'steps',
-                style: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontSize: 12,
-                ),
-              ),
+              Row(
+                children: [
+                  Text(
+                    'xp',
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 12,)),
+
+                 Text(
+                   AppIcon.xp,
+                   style: TextStyle(
+                     fontSize: 15,
+                     color: AppColor.xpo
+                   ),
+                 )
+
+
+                ],
+              )
+              // Text(
+              //   'xp',
+              //   style: TextStyle(
+              //     color: Colors.grey.shade400,
+              //     fontSize: 12,
+              //   ),
+              // ),
+              // Lottie.network('https://fonts.gstatic.com/s/e/notoemoji/latest/1f525/lottie.json',height: 50,width: 30),
+
             ],
           ),
         ],
