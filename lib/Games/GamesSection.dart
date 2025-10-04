@@ -64,18 +64,18 @@ class _GamesSectionState extends State<GamesSection>
       isNew: false,
       progress: 0.4,
     ),
-    GameData(
-      title: 'Grammar Quest',
-      subtitle: 'Master English grammar',
-      description: 'Fix sentences, learn grammar rules, and speak correctly',
-      icon: Icons.rule,
-      gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      level: 'Advanced',
-      duration: '8-12 min',
-      points: '70-120 pts',
-      isNew: false,
-      progress: 0.2,
-    ),
+    // GameData(
+    //   title: 'Grammar Quest',
+    //   subtitle: 'Master English grammar',
+    //   description: 'Fix sentences, learn grammar rules, and speak correctly',
+    //   icon: Icons.rule,
+    //   gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
+    //   level: 'Advanced',
+    //   duration: '8-12 min',
+    //   points: '70-120 pts',
+    //   isNew: false,
+    //   progress: 0.2,
+    // ),
     // GameData(
     //   title: 'Conversation Challenge',
     //   subtitle: 'Real-world conversations',
@@ -461,9 +461,10 @@ class _GamesSectionState extends State<GamesSection>
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ErrorHunt()));
     }else if(game.title == 'Translation Match'){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>TranslationMatchScreen()));
-    }else if(game.title == 'Grammar Quest'){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>FindWordMeaningGame()));
     }
+    // else if(game.title == 'Grammar Quest'){
+    //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>FindWordMeaningGame()));
+    // }
 
 
     // ScaffoldMessenger.of(context).showSnackBar(

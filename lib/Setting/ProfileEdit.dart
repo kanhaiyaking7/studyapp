@@ -26,6 +26,7 @@ class _ProfileEditState extends ConsumerState<ProfileEdit> {
 
   bool _isLoading = false;
   String _selectedGender = 'Male';
+  String avatoroo = '';
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _ProfileEditState extends ConsumerState<ProfileEdit> {
     _emailController.text = user.email;
     _phoneController.text = user.phone_Number.toString();
     _bioController.text = user.bio;
+    avatoroo = user.avator;
   }
 
   @override
@@ -144,10 +146,9 @@ class _ProfileEditState extends ConsumerState<ProfileEdit> {
                     width: 2,
                   ),
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF8E8E93),
-                  size: 60,
+                child:   CircleAvatar(
+                  backgroundImage:NetworkImage(avatoroo),
+                  // backgroundColor: Colors.red,
                 ),
               ),
 

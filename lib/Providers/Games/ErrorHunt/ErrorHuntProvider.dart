@@ -22,9 +22,17 @@ final ErrorHuntProvider = FutureProvider<List>((ref) async{
 
 
     // return(output as List).map((e)=>GrammarCorrection.fromJson(e)).toList();
-    return (output as List)
+
+
+      var result = (output as List)
         .map((item) => GrammarHunt.fromJson(item))
         .toList();
+
+      print(result[0]);
+      print("WWWW");
+      print(result[0].question);
+
+      return result;
 
 
   }on SocketException{

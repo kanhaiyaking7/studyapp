@@ -152,7 +152,8 @@ class _PathScreenState extends ConsumerState<PathScreen> {
     int completedLevels = ref.watch(Current_Level);
 
 
-    return Scaffold(
+    return
+      Scaffold(
       backgroundColor: const Color(0xFF2D2D2D),
       body: SafeArea(
         child: Column(

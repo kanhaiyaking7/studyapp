@@ -15,12 +15,19 @@ final Translationprovider = FutureProvider<List>((ref) async{
     select('question').
     eq('index', 1);
 
+    print(output);
+
+
+
 
 
     // return(output as List).map((e)=>GrammarCorrection.fromJson(e)).toList();
-    return (output as List)
-        .map((item) => Transmatch.fromJson(item))
+    var result = (output as List)
+        .map((item) => GrammarHunt.fromJson(item))
         .toList();
+
+
+    return  result;
 
 
   }on SocketException{
@@ -31,6 +38,7 @@ final Translationprovider = FutureProvider<List>((ref) async{
 
 
 });
+
 class Transmatch {
   final String hindi;
   final String english;
@@ -52,3 +60,17 @@ class Transmatch {
     );
   }
 }
+
+class GrammarHunt {
+  final List<Transmatch> question;
+
+  GrammarHunt({required this.question});
+
+  factory GrammarHunt.fromJson(Map<String, dynamic> json) {
+    final List qList = json['question'] ?? [];
+    return GrammarHunt(
+      question: qList.map((e) => Transmatch.fromJson(e)).toList(),
+    );
+  }
+}
+

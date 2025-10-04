@@ -196,7 +196,7 @@ class _MeanState extends ConsumerState<Mean> {
             width: 120,
             height: 230,
             child: Image.asset(
-              'assets/images/teacher.png', // Make sure to add this image to your assets
+              'assets/images/teacher.webp', // Make sure to add this image to your assets
               width: 120,
               height: 230,
               fit: BoxFit.cover,

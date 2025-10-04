@@ -8,13 +8,15 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:hi/Providers/Aichat_provider/Aichat_provider.dart';
 import 'package:hi/Role_ai/Animation.dart';
 import 'package:hi/Role_ai/SpeakButt.dart';
+import 'package:hi/Role_ai/VideoAnim.dart';
 import 'package:hi/Role_ai/logic_ai.dart';
 import 'package:video_player/video_player.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AIVirtual extends ConsumerStatefulWidget {
   final result;
-  AIVirtual({required this.result});
+  final resultinfo;
+  AIVirtual({required this.result, required this.resultinfo});
   @override
   ConsumerState<AIVirtual> createState() => _AIVirtualState();
 }
@@ -28,6 +30,15 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
   bool TrigerError = false;
 
   ScrollController _scrollController = ScrollController();
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 
 
   FlutterTts flutterTts  = FlutterTts();
@@ -36,6 +47,7 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
   ////
   late List josh = widget.result;
   late List<dynamic> _messages = josh;
+  late var questionlength = _messages.length;
   // [
   //
   //   ChatMessage(
@@ -116,12 +128,22 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
   var speaking_word = "";
 
 
+  var speak_complete  = false;
+
+  void speak_done(){
+    setState(() {
+    speak_complete = !speak_complete;
+    });
+
+}
+
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
 
     // initSpeech();
     _speech = stt.SpeechToText();
@@ -133,9 +155,21 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
 
   Future _speak() async {
 
+
+    // pitch = 1.0;
+   var voice = 'en-us-x-sfg#female_1-local';
+
     await flutterTts.setLanguage("en");
-    await flutterTts.setPitch(1);
-    await flutterTts.speak(message_data.last.text);
+    await flutterTts.setPitch(1.0);
+   await flutterTts.setVoice({'name': voice, 'locale': 'en-US'});
+
+
+  var done =   await flutterTts.speak(message_data.last.text);
+ var wwe =  await flutterTts.awaitSpeakCompletion(true);
+
+ if(wwe == 1){
+   speak_done();
+ }
   }
 
   @override
@@ -145,15 +179,16 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
     flickManager.dispose();
     // _stopListening();
     _scrollController.dispose();
-
-
   }
 
   void re_run(query){
+
     setState(() {
       message_data.addAll(query);
       _speak();
     });
+
+    _scrollToBottom();
   }
 
   // void initSpeech() async {
@@ -365,74 +400,79 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
   Widget build(BuildContext context) {
     // final data =  ref.watch(AiChat_provider);
     // print(widget.result[0].output[0].hindiMean);
-    print("OOOOOOOOO");
+    // print("OOOOOOOOO");
     return Scaffold(
-      backgroundColor: Color(0xFF1E1E1E),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF2D2D2D),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            // CircleAvatar(
-            //   radius: 20,
-            //   backgroundColor: Color(0xFF3D3D3D),
-            //   child: Icon(Icons.person, color: Colors.white70),
-            // ),
-            // SizedBox(width: 12),
-            Expanded(
-              child:
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Bane Gibsonwa",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  // Text(
-                  //   "Online",
-                  //   style: TextStyle(
-                  //     color: Colors.green,
-                  //     fontSize: 12,
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          // IconButton(
-          //   icon: Icon(Icons.videocam, color: Colors.white),
-          //   onPressed: () {},
-          // ),
-          // IconButton(
-          //   icon: Icon(Icons.call, color: Colors.white),
-          //   onPressed: () {},
-          // ),
-          IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.white),
-            onPressed: () {},
-          ),
-        ],
-      ),
-      body:
+      // backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: Colors.transparent,
+      // appBar: AppBar(
+      //   backgroundColor: Color(0xFF2D2D2D),
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back, color: Colors.white),
+      //     onPressed: () => Navigator.pop(context),
+      //   ),
+      //   title: Row(
+      //     children: [
+      //       // CircleAvatar(
+      //       //   radius: 20,
+      //       //   backgroundColor: Color(0xFF3D3D3D),
+      //       //   child: Icon(Icons.person, color: Colors.white70),
+      //       // ),
+      //       // SizedBox(width: 12),
+      //       Expanded(
+      //         child:
+      //         Column(
+      //           crossAxisAlignment: CrossAxisAlignment.start,
+      //           children: [
+      //             Text(
+      //               "Bane Gibsonwa",
+      //               style: TextStyle(
+      //                 color: Colors.white,
+      //                 fontSize: 18,
+      //                 fontWeight: FontWeight.w600,
+      //               ),
+      //             ),
+      //             // Text(
+      //             //   "Online",
+      //             //   style: TextStyle(
+      //             //     color: Colors.green,
+      //             //     fontSize: 12,
+      //             //   ),
+      //             // ),
+      //           ],
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      //   actions: [
+      //     // IconButton(
+      //     //   icon: Icon(Icons.videocam, color: Colors.white),
+      //     //   onPressed: () {},
+      //     // ),
+      //     // IconButton(
+      //     //   icon: Icon(Icons.call, color: Colors.white),
+      //     //   onPressed: () {},
+      //     // ),
+      //     IconButton(
+      //       icon: Icon(Icons.more_vert, color: Colors.white),
+      //       onPressed: () {},
+      //     ),
+      //   ],
+      // ),
+      body: Stack(
+        children: [
+          Positioned.fill(child: Videoanim(speak:speak_complete)),
+
+
 
       Column(
         children: [
           // Video Call Section
-          Container(
-            width: double.infinity,
-            height: 190,
-            child:  Animat(),
-          ),
+          // Container(
+          //   width: double.infinity,
+          //   height: 300,//190
+          //   child:  Videoanim(),
+          // ),
 
           // Container(
           //   width: double.infinity,
@@ -495,6 +535,17 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
           // if(message_data.length > 2){
           //
           // }
+          const SizedBox(height: 40),
+          Container(
+            alignment: Alignment.topRight,
+            child: IconButton(
+
+        icon: Icon(Icons.close, color: Colors.black, size: 30,),
+    onPressed: () => Navigator.pop(context),),
+          ),
+
+          // const SizedBox(height: 350),
+          const SizedBox(height: 280),
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -519,7 +570,10 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
           VoiceInputBottomUI(
               messageList:_messages,
               view_message :message_data,
-              change_run :re_run
+              change_run :re_run,
+              speak_complete: speak_complete,
+              speak_fun: speak_done,
+              resultinfo:widget.resultinfo
           ),
     //       Container(
     //         margin: EdgeInsets.all(12),
@@ -650,12 +704,14 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
           // ),
         ],
       ),
+        ],
+      )
     );
   }
 
   Widget _buildMessageBubble( message) {
-    print(message.text);
-    print("qq");
+    // print(message.text);
+    // print("qq");
     return Container(
       // margin: EdgeInsets.only(bottom: 56),
       margin: EdgeInsets.only(top:30),
@@ -673,7 +729,7 @@ class _AIVirtualState extends ConsumerState<AIVirtual> {
               width: 200,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: message.isUser ? Colors.blue : Color(0xFF3D3D3D),
+                color: message.isUser ? Colors.blue.withOpacity(0.2) : Color(0xFF3D3D3D).withOpacity(0.8),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Column(

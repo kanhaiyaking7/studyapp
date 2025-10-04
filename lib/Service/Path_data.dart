@@ -27,9 +27,6 @@ final All_path_data = FutureProvider.family<dynamic,int>((ref,value) async{
 
     }
 
-
-
-
 });
 
 // class All_path_data{

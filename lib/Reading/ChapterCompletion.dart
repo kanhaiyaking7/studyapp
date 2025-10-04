@@ -1,17 +1,19 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Core/statsprovider.dart';
 
-class ChapterCompletionScreen extends StatefulWidget {
+class ChapterCompletionScreen extends ConsumerStatefulWidget{
   final cover;
   final  chaptercompleted;
   final int chapter_no;
   const ChapterCompletionScreen({required this.cover,required this.chaptercompleted, required this.chapter_no});
 
   @override
-  State<ChapterCompletionScreen> createState() => _ChapterCompletionScreenState();
+ ConsumerState<ChapterCompletionScreen> createState() => _ChapterCompletionScreenState();
 }
 
-class _ChapterCompletionScreenState extends State<ChapterCompletionScreen>
+class _ChapterCompletionScreenState extends ConsumerState<ChapterCompletionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -207,6 +209,7 @@ class _ChapterCompletionScreenState extends State<ChapterCompletionScreen>
                   onPressed: () {
                     // Add navigation logic here
                     print('Continue to next chapter');
+                    ref.read(statsProvider.notifier).addActivity("Pronunciation", 10);
                     widget.chaptercompleted(widget.chapter_no);
                     Navigator.pop(context);
                   },

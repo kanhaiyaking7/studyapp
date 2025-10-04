@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hi/Core/StreakProvider.dart';
+import 'package:hi/Core/statsprovider.dart';
 import 'package:hi/Providers/path_provier/Current_Level.dart';
 import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 import 'package:hi/utils/IconList.dart';
@@ -179,6 +181,9 @@ class _ResultState extends ConsumerState<Result> with TickerProviderStateMixin {
     ref.read(UserProgress_Provider.notifier).store_lessondata(lev, '50%', 10, 35);
 
      ref.read(UserProgress_Provider.notifier).increase_score(5);
+
+    ref.read(statsProvider.notifier).addActivity("Conversation", 10);
+    ref.read(streakProvider.notifier).markTodayActive();
 
 
      // ref.read(UserProgress_Provider.notifier).;

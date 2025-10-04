@@ -11,7 +11,7 @@ class UserNotifier extends StateNotifier<UserState> {
   UserNotifier()
       : super(
     UserState(username: "", age: 0, min_studytime: 0, English_Level: "",
-        email: "",phone_Number: 0,bio: ""),
+        email: "",phone_Number: 0,bio: "", avator:"https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/ivan_2.png.webp"),
   );
 
   void user_info(String name, int age) {

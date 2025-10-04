@@ -16,6 +16,9 @@ class TranslationButton extends StatefulWidget {
 
 class _SpeakbuttState extends State<TranslationButton> {
 
+
+  ////////////////
+
   late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = "";
@@ -134,29 +137,180 @@ class _SpeakbuttState extends State<TranslationButton> {
       // backgroundColor: Colors.black,
       body:
 
+
       Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.green.shade400, Colors.red.shade600],
-          ),
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color:  Colors.blue.withOpacity(0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
+        // height: 200,
+        // width: double.infinity,
+        child: Column(
+
+          children: [
+
+            Container(
+
+              child:   TrigerError == true ? Text('Speak again',
+                  style:TextStyle(color: Colors.red,fontSize: 20))
+                  :Container(),
             ),
+
+            Container(
+              height: 180,
+              width: double.infinity,
+
+              decoration:  BoxDecoration(
+                color: Color(0xFF1E1E1E),
+                // color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+
+                child: Column(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+
+
+                    // Main content area
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Status text
+                          Text(
+                            _text.length > 2  ? _text : "...",
+                            style: TextStyle(
+                              color:  TrigerError
+                                  ? Colors.red[400]: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              // Speaker button
+                              GestureDetector(
+                                onTap: onSpeakerPressed,
+                                child: Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[800],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.volume_up,
+                                    color: Colors.grey[300],
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+
+                              // Microphone button (main/larger)
+
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: TrigerError
+                                        ? [Colors.red[400]!, Colors.red[600]!]
+                                        : [Colors.blue[400]!, Colors.blue[600]!],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: (TrigerError? Colors.red : Colors.blue).withOpacity(0.3),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.mic, color: Colors.white),
+                                  onPressed:_isListening ? _stopListening : _startListening,
+                                  // onPressed: (){},
+                                  iconSize: 38,
+                                ),
+
+                              ),
+
+
+                              // Text format button
+                              GestureDetector(
+                                onTap: (){},
+                                child: Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[800],
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.text_fields,
+                                        color: Colors.grey[300],
+                                        size: 20,
+                                      ),
+                                      Positioned(
+                                        top: 12,
+                                        right: 12,
+                                        child: Container(
+                                          width: 16,
+                                          height: 16,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[700],
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'A',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+            )
           ],
         ),
-        child: IconButton(
-          icon: const Icon(Icons.mic, color: Colors.white),
-          onPressed:_isListening ? _stopListening : _startListening,
-          // onPressed: (){},
-          iconSize: 38,
-        ),
-      ),
+      )
+
+
+
 
 
     );

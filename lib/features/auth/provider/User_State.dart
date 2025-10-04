@@ -7,6 +7,7 @@ class UserState {
   String email;
   int phone_Number;
   String bio;
+  String avator;
 
   UserState({
     required this.username,
@@ -16,6 +17,7 @@ class UserState {
     required this.email,
     required this.phone_Number,
     required this.bio,
+    required this.avator
   });
 
   UserState copyWith({
@@ -25,7 +27,8 @@ class UserState {
     String? English_Level,
     String? email,
     int? phone_Number,
-    String? bio
+    String? bio,
+    String? avator
   }) {
     return UserState(
       username: username ?? this.username,
@@ -34,7 +37,8 @@ class UserState {
       English_Level: English_Level ?? this.English_Level,
       email: email ?? this.email,
       phone_Number: phone_Number ?? this.phone_Number,
-      bio: bio ?? this.bio
+      bio: bio ?? this.bio,
+        avator: avator ?? this.avator
     );
   }
 }

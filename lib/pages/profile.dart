@@ -2,6 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Core/ProfileProvider.dart';
+import 'package:hi/Core/StreakProvider.dart';
+import 'package:hi/Core/statsprovider.dart';
+import 'package:hi/Setting/SettingUi.dart';
+import 'package:hi/features/auth/provider/User_provider.dart';
 import 'package:hi/utils/IconList.dart';
 import 'package:intl/intl.dart';
 
@@ -18,7 +22,7 @@ class _ProfileState extends ConsumerState<Profile> {
   final String userLevel = "Premium Member";
   final int totalExp = 1250;
   final String speakingTime = "45h 30m";
-  final int currentStreak = 4;
+  // final int currentStreak = 4;
 
   // 7 days streak data (true = completed, false = not completed)
 
@@ -26,7 +30,8 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     print("Profile!!!!!!!!");
-    return Scaffold(
+    return
+      Scaffold(
       backgroundColor: const Color(0xFF1A1A1A),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -73,11 +78,12 @@ class _ProfileState extends ConsumerState<Profile> {
               color: const Color(0xFF6C5CE7),
               borderRadius: BorderRadius.circular(40),
             ),
-            child: const Icon(
-              Icons.person,
-              size: 40,
-              color: Colors.white,
-            ),
+            child:Consumer(builder: (context,ref,chld){
+              final avator = ref.watch(UserDetails).avator;
+              return CircleAvatar(
+              backgroundImage:NetworkImage(avator));
+            }),
+
           ),
           const SizedBox(width: 16),
 
@@ -86,14 +92,18 @@ class _ProfileState extends ConsumerState<Profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  userName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Consumer(builder: (context,ref,chld){
+                  final user_name = ref.watch(UserDetails).username;
+                  return  Text(
+                    user_name,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                }),
+
                 const SizedBox(height: 4),
                 Text(
                   userLevel,
@@ -125,16 +135,20 @@ class _ProfileState extends ConsumerState<Profile> {
           ),
 
           // Settings Icon
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF6C5CE7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.settings,
-              color: Colors.white,
-              size: 24,
+          GestureDetector(
+            onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Setting()));
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C5CE7),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.settings,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
           ),
         ],
@@ -172,16 +186,18 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   Widget _buildSpeakingStreak() {
-    DateTime now =  DateTime.now();
-    DateTime currentDate  = DateTime(now.year,now.month, now.day);
-    String monthname = DateFormat.MMM().format(now);
-    String dayname = DateFormat.EEEEE().format(now);
 
-    print(dayname);
+    final streak = ref.watch(streakProvider);
+
     // final int currentStreak = 4;
 
     final List<bool> streakData = [true, true, true, true, true, false, false];
     final List<String> weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+
+    DateTime now = DateTime.now();
+    String monthname = DateFormat.MMM().format(now);
+    String dayname = DateFormat.EEEE().format(now);
 
 
     return Container(
@@ -212,7 +228,7 @@ class _ProfileState extends ConsumerState<Profile> {
               ),
               const Spacer(),
               Text(
-                '$currentStreak',
+                '${streak.currentStreak}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -223,7 +239,8 @@ class _ProfileState extends ConsumerState<Profile> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Today • ${monthname} ${currentDate.day} • $currentStreak of 7',
+            // 'Today • ${monthname} ${currentDate.day} • $currentStreak of 7',
+            'Today • $monthname ${now.day} • ${streak.currentStreak} days',
             // 'Today  ',
             style: TextStyle(
               color: Colors.grey[400],
@@ -241,16 +258,18 @@ class _ProfileState extends ConsumerState<Profile> {
                 height: 40,
                 decoration: BoxDecoration(
                   // color: streakData[index]
-                  color: currentStreak-1 >= index
-                      ? const Color(0xFF6C5CE7)
-                      : Colors.grey[600],
+             color:     streak.currentStreak - 1 >= index ? const Color(0xFF6C5CE7) : Colors.grey[600],
+                  // color: currentStreak-1 >= index
+                  //     ? const Color(0xFF6C5CE7)
+                  //     : Colors.grey[600],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
                   child: Text(
                     weekDays[index],
                     style: TextStyle(
-                      color: currentStreak-1 >= index ? Colors.white : Colors.grey[400],
+                      color: streak.currentStreak - 1 >= index ? Colors.white : Colors.grey[400],
+                      // color: currentStreak-1 >= index ? Colors.white : Colors.grey[400],
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -282,7 +301,7 @@ class _ProfileState extends ConsumerState<Profile> {
           children: [
             _buildAchievementItem(
               Icons.wb_sunny,
-              'Early Speaker',
+              'New Speaker',
               Colors.orange,
               true,
             ),
@@ -290,13 +309,13 @@ class _ProfileState extends ConsumerState<Profile> {
               Icons.check_circle,
               'Daily Goal',
               Colors.blue,
-              true,
+              false,
             ),
             _buildAchievementItem(
               Icons.emoji_events,
               'Perfect Week',
               Colors.purple,
-              true,
+              false,
             ),
             _buildAchievementItem(
               Icons.lock,
@@ -350,6 +369,7 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   Widget _buildStatistics() {
+    final stats = ref.watch(statsProvider);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -392,11 +412,11 @@ class _ProfileState extends ConsumerState<Profile> {
           ),
           const SizedBox(height: 16),
 
-          _buildStatisticsItem('Conversation', '45%', const Color(0xFF6C5CE7)),
+          _buildStatisticsItem('Conversation',   '${stats.getConversationPercent().toStringAsFixed(1)}%', const Color(0xFF6C5CE7)),
           const SizedBox(height: 12),
-          _buildStatisticsItem('Pronunciation', '32%', const Color(0xFF00D4AA)),
+          _buildStatisticsItem('Pronunciation',  '${stats.getPronunciationPercent().toStringAsFixed(1)}%', const Color(0xFF00D4AA)),
           const SizedBox(height: 12),
-          _buildStatisticsItem('Grammar', '23%', const Color(0xFFFFC107)),
+          _buildStatisticsItem('Grammar',     '${stats.getGrammarPercent().toStringAsFixed(1)}%', const Color(0xFFFFC107)),
         ],
       ),
     );

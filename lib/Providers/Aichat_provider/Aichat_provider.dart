@@ -5,10 +5,16 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final AiChat_provider = FutureProvider<List>((ref) async {
+final AiChat_provider = FutureProvider.family<List,dynamic>((ref,value) async {
 
-  final output =await Supabase.instance.client.from('Job_interview').select();
-  print(output);
+
+
+  final output =await Supabase.instance.client.
+  from(value.name).select().
+  eq("level_no", value.level);
+
+
+
 
   var answer = (output as List).map((item) => LevelModel.fromJson(item)).toList();
 

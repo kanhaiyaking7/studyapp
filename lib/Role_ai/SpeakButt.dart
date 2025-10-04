@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hi/Role_ai/CompleteRoleUI.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 
@@ -6,9 +7,12 @@ class VoiceInputBottomUI extends StatefulWidget {
   final  messageList;
   final view_message;
   final change_run;
+  final speak_complete;
+  final  speak_fun;
+  final   resultinfo;
    VoiceInputBottomUI({Key? key ,required this.messageList ,
-   required this.view_message,
-   required this.change_run}) : super(key: key);
+   required this.view_message, required this.speak_complete,required this.speak_fun,
+   required this.change_run, required this.resultinfo}) : super(key: key);
 
   @override
   State<VoiceInputBottomUI> createState() => _VoiceInputBottomUIState();
@@ -20,6 +24,7 @@ class _VoiceInputBottomUIState extends State<VoiceInputBottomUI> {
   bool _isListening = false;
   String _text = "";
   bool TrigerError = false;
+
 
   late String english_text = widget.messageList[widget.view_message.length].text;
   late String hindi_text = widget.messageList[widget.view_message.length].hindi_text;
@@ -80,29 +85,46 @@ class _VoiceInputBottomUIState extends State<VoiceInputBottomUI> {
       await _speech.stop();
       setState(() => _isListening = false);
 
-      if (recognizedText.isNotEmpty) {
-        var changetext = recognizedText.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '');
-        print(changetext);
+      // RegExp(r'[^\w\s]')
+      // RegExp(r'[^\w\s\.|\ ?]')
 
-        var current_chat_no = widget.view_message.length - 1;
+      if (recognizedText.isNotEmpty) {
+        print("+++++++++++)");
+        var changetext = recognizedText.toLowerCase().replaceAll(
+            RegExp(r'[^\w\s]'), '');
+        // print(changetext);
+        print( widget.view_message.length);
+        print(widget.messageList.length);
+
+        if(  widget.view_message.length + 2 >= widget.messageList.length  ){
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (_)=>
+                  RolePlayCompletionScreen(resultinfo: widget.  resultinfo)));
+        }
+
+        var current_chat_no = widget.view_message.length - 1 ;
+
+
         List logic = [
           widget.messageList[current_chat_no + 1],
           widget.messageList[current_chat_no + 2]
         ];
-        print("++++++++++");
+        // print("++++++++++");
         var firchange = widget.messageList[current_chat_no + 1]
             .text
             .toLowerCase()
             .replaceAll(RegExp(r'[^\w\s]'), '');
         print(firchange);
-        print(firchange == changetext);
+        print(changetext);
 
         if (changetext == firchange) {
           // setState(() {
           //   widget.view_message.addAll(logic);
           //   _speak();
           // });
+
           widget.change_run(logic);
+          widget.speak_fun();
           setState(() {
             english_text = widget.messageList[widget.view_message.length].text;
             hindi_text = widget.messageList[widget.view_message.length].hindi_text;
@@ -142,7 +164,10 @@ class _VoiceInputBottomUIState extends State<VoiceInputBottomUI> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+
+
+    return
+      Column(
       children: [
 
         Container(
@@ -190,7 +215,7 @@ class _VoiceInputBottomUIState extends State<VoiceInputBottomUI> {
                 children: [
                   // Status text
                   Text(
-                    english_text,
+                   widget.speak_complete == true ? english_text : "...",
                     style: TextStyle(
                       color:  TrigerError
                           ? Colors.red[400]: Colors.white,
