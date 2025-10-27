@@ -8,7 +8,7 @@ final RoleplayProvider = StateNotifierProvider<Roleplaynotifier,Roleplayinfo>((r
 
 class Roleplaynotifier extends StateNotifier<Roleplayinfo>{
   Roleplaynotifier():super(Roleplayinfo(Roleplaydata: [
-    RoleplayData(Scenariou: "Job_interview", chapter_completed: 1),
+    RoleplayData(Scenariou: "Job_interview", chapter_completed: 0),
     RoleplayData(Scenariou: "Making_Friends", chapter_completed: 0),
     RoleplayData(Scenariou: "shoppingClothes", chapter_completed: 4),
     RoleplayData(Scenariou: "Renting_car", chapter_completed: 5),

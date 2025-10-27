@@ -15,22 +15,14 @@ final ErrorHuntProvider = FutureProvider<List>((ref) async{
     select('question').
     eq('index', 1);
 
-   print(output);
-
-
-
-
-
+print("data");
     // return(output as List).map((e)=>GrammarCorrection.fromJson(e)).toList();
-
 
       var result = (output as List)
         .map((item) => GrammarHunt.fromJson(item))
         .toList();
 
-      print(result[0]);
-      print("WWWW");
-      print(result[0].question);
+
 
       return result;
 

@@ -113,7 +113,6 @@ class _SpeakbuttState extends State<TranslationButton> {
   }
 
 
-
   Future<void> _stopListening() async {
     if (_isListening) {
       await _speech.stop();

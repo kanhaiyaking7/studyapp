@@ -13,7 +13,7 @@ final Translationprovider = FutureProvider<List>((ref) async{
   try{
     final output =await Supabase.instance.client.from('translmatch').
     select('question').
-    eq('index', 1);
+    eq('index', 4);
 
     print(output);
 
@@ -40,12 +40,14 @@ final Translationprovider = FutureProvider<List>((ref) async{
 });
 
 class Transmatch {
+  final String Rule;
   final String hindi;
   final String english;
   final String grammarHint;
 
 
  Transmatch({
+   required this.Rule,
  required this.hindi,
   required this.english,
   required this.grammarHint
@@ -53,6 +55,7 @@ class Transmatch {
 
   factory Transmatch.fromJson(Map<String, dynamic> json) {
     return Transmatch(
+      Rule: json['Rule'] ?? '',
       hindi:json['hindi'] ?? '',
       english:json['english'] ?? '',
       grammarHint: json['grammarHint'] ?? '',

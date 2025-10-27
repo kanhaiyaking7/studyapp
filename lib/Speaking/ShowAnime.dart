@@ -31,7 +31,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 
   ];
 
-  final List Video_stop = [0, 3, 3, 5, 3,10];
+  // final List Video_stop = [0, 3, 3, 5, 3,10];
 
    complet_mic(){
     setState(() {
@@ -45,13 +45,13 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
 stop_anim(person){
      // person();
 
-       Timer(Duration(seconds: Video_stop[message]), () {
-         print("Pausing video after seconds.");
-         // if (_controller.value.isPlaying) {
-         //   _controller.pause();
-         // }
-         person();
-       });
+       // Timer(Duration(seconds: Video_stop[message]), () {
+       //   print("Pausing video after seconds.");
+       //   // if (_controller.value.isPlaying) {
+       //   //   _controller.pause();
+       //   // }
+       //   person();
+       // });
 
 }
 

@@ -139,7 +139,7 @@ final List<Map<String,dynamic>> Winners = [
                     // Top 3 Podium Section
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 1),
                       child: Column(
                         children: [
                           // Winners Row
@@ -185,7 +185,7 @@ final List<Map<String,dynamic>> Winners = [
                             ],
                           ),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 10),
                           // Podium Base
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -218,7 +218,8 @@ final List<Map<String,dynamic>> Winners = [
                                 width: 100,
                                 height: 120,
                                 decoration: const BoxDecoration(
-                                  color: Colors.amber,
+                                  // color: Colors.amber,
+                                  color: Colors.green,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     topRight: Radius.circular(8),
@@ -427,6 +428,7 @@ final List<Map<String,dynamic>> Winners = [
                                           streak: champions[index].streak,
                                           xp: champions[index].xp,
                                           position: champions[index].position,
+                                          user:false,
                                           avatar: champions[index].avatar,
                                         );
                                       },
@@ -447,6 +449,7 @@ final List<Map<String,dynamic>> Winners = [
                                               streak: 55,
                                               xp: 56,
                                               position: -1,
+                                              user: true,
                                               avatar: 'https://vwpuplztcmyhtzlzbylf.supabase.co/storage/v1/object/public/Avator/avator/Nikita.png.webp',
                                             );
                                           }),
@@ -572,13 +575,33 @@ final List<Map<String,dynamic>> Winners = [
     required int streak,
     required int xp,
     required int position,
+    required  bool user,
     required String avatar,
     // required bool isCurrentUser,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(5),
+      decoration: user ? BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF6B4E9C), // Purple
+            Color(0xFF4A5F8C), // Blue-purple
+            Color(0xFF7B5C6E), // Mauve
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ) :
+        BoxDecoration(
         color: const Color(0xFF2A2A2A),
         borderRadius: BorderRadius.circular(12),
       ),

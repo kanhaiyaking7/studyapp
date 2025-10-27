@@ -229,7 +229,8 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
   }
 
   Widget buildLevelSelector() {
-    return Container(
+    return
+      Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -262,7 +263,8 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
   }
 
   Widget buildGameModeSelector() {
-    return Column(
+    return
+      Column(
       children: [
         SwitchListTile(
           title: const Text('Timed Mode (60s)', style: TextStyle(color: Colors.white)),
@@ -501,7 +503,8 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
   } ////
 
   Widget buildStartScreen() {
-    return Center(
+    return
+      Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -533,7 +536,7 @@ class _ErrorHuntState extends State<ErrorHunt> with TickerProviderStateMixin {
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: (){
-              Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=>Errorplay()));
+              // Navigator.pushReplacement(context,MaterialPageRoute(builder: (_)=>Errorplay()));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,

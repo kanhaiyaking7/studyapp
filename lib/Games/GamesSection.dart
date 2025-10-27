@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:hi/Games/Dragpoint.dart';
 import 'package:hi/Games/ErrorHunt.dart';
+import 'package:hi/Games/NewErrorpage.dart';
+import 'package:hi/Games/TranslationMatchHome.dart';
 import 'package:hi/Games/wordmeaning.dart';
 
 class GamesSection extends StatefulWidget {
@@ -458,9 +460,9 @@ class _GamesSectionState extends State<GamesSection>
   void _navigateToGame(GameData game) {
     // Show game selection feedback
     if(game.title == 'Error Hunt'){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ErrorHunt()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Newerrorpage()));
     }else if(game.title == 'Translation Match'){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>TranslationMatchScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>Translationmatchhome()));
     }
     // else if(game.title == 'Grammar Quest'){
     //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>FindWordMeaningGame()));

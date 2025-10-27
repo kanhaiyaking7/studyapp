@@ -15,6 +15,7 @@ class _VideoFormatState extends State<VideoFormat> {
   late YoutubePlayerController _controller;
   late Timer _timer;
   bool _isloading = false;
+  Timer? _stopTimer;
 
   final List<int> pauseTimes = [10, 15, 22];
   final Set<int> alreadyPaused = {};
@@ -22,28 +23,45 @@ class _VideoFormatState extends State<VideoFormat> {
 
   @override
   void initState() {
-    final videoId = YoutubePlayer.convertUrlToId(videourl);
+    final videoId = YoutubePlayer.convertUrlToId(videourl)!;
     _controller = YoutubePlayerController(
-        initialVideoId: videoId!,
-        flags: YoutubePlayerFlags(
-            autoPlay:true,
-            hideControls: true,
-            startAt: 05,
-            // endAt: 025,
-            hideThumbnail: true,
-            enableCaption: false,
-            controlsVisibleAtStart: false,
-            disableDragSeek: false,
-            useHybridComposition: true,
-
-        ));
+      initialVideoId: videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+        hideControls: true,
+      ),
+    );
+    // _controller = YoutubePlayerController(
+    //     initialVideoId: videoId!,
+    //     flags: YoutubePlayerFlags(
+    //         autoPlay:true,
+    //         hideControls: true,
+    //         startAt: 05,
+    //         endAt: 035,
+    //         hideThumbnail: true,
+    //         enableCaption: false,
+    //         controlsVisibleAtStart: false,
+    //         disableDragSeek: false,
+    //         useHybridComposition: true,
+    //
+    //     ));
     // TODO: implement initState
 
+
     // stopAfterDelay(12);
+    _controller.addListener(() {
+      if (_controller.value.isPlaying && _stopTimer == null) {
+        _stopTimer = Timer(const Duration(seconds: 10), () {
+          _controller.pause();
+        });
+      }
+    });
 
     super.initState();
 
   }
+
 
 @override
 void dispose() {
@@ -52,14 +70,14 @@ void dispose() {
   super.dispose();
 }
 
-  void stopAfterDelay(int seconds) {
-    Timer(Duration(seconds: seconds), () {
-      print("Pausing video after $seconds seconds.");
-      if (_controller.value.isPlaying) {
-        _controller.pause();
-      }
-    });
-  }
+  // void stopAfterDelay(int seconds) {
+  //   Timer(Duration(seconds: seconds), () {
+  //     print("Pausing video after $seconds seconds.");
+  //     if (_controller.value.isPlaying) {
+  //       _controller.pause();
+  //     }
+  //   });
+  // }
 
   void stop(){
 
@@ -84,55 +102,56 @@ void dispose() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child:   Expanded(
-        flex: 2,
-        child: Container(
+        child:   Container(
           width: double.infinity,
           color: Colors.black,
-          child: Stack(
+          child: Column(
             children: [
-              // Video placeholder with character
-              Column(
-                children: [
-                  YoutubePlayer(controller: _controller,
-                    showVideoProgressIndicator: false,
-                    onReady: ()=>debugPrint("also print"),
-                    bottomActions: [
-                      CurrentPosition(),
+
+                  // Video placeholder with character
+                  Column(
+                    children: [
+                      YoutubePlayer(controller: _controller,
+                        showVideoProgressIndicator: false,
+                        onReady: ()=>debugPrint("also print"),
+                        bottomActions: [
+                          CurrentPosition(),
+                        ],
+                      )
                     ],
-                  )
-                ],
-              ),
+                  ),
 
 
 
-              Positioned(
-                bottom: 1,
-                right: 16,
-                top: 160,
-                child: Row(
-                  children: [
-                    IconButton(onPressed: (){play();},
-                        icon: Icon(Icons.place,size: 30,)
+                  Positioned(
+                    bottom: 1,
+                    right: 16,
+                    top: 160,
+                    child: Row(
+                      children: [
+                        IconButton(onPressed: (){play();},
+                            icon: Icon(Icons.place,size: 30,)
+                        ),
+
+                        Icon(Icons.play_arrow, color: Colors.white, size: 20),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'YouTube',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
+                        const SizedBox(width: 14),
+                        IconButton(onPressed: (){stop();},
+                            icon: Icon(Icons.stop,size: 30,)
+                        )
+                      ],
                     ),
+                  ),
 
-                    Icon(Icons.play_arrow, color: Colors.white, size: 20),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'YouTube',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    const SizedBox(width: 14),
-                    IconButton(onPressed: (){stop();},
-                        icon: Icon(Icons.stop,size: 30,)
-                    )
-                  ],
-                ),
-              ),
+
             ],
           ),
         ),
-      ),),
+      ),
     );
   }
 }

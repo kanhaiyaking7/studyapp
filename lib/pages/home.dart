@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/Games/GamesSection.dart';
+import 'package:hi/ImageReading/HomeImagereading.dart';
+import 'package:hi/ImageReading/ImageReadingHome.dart';
+import 'package:hi/ImageReading/Imagereading.dart';
+import 'package:hi/ImageReading/Seeimage.dart';
 import 'package:hi/Providers/path_provier/Quiz_provider.dart';
 import 'package:hi/Reading/Bookstore.dart';
 import 'package:hi/Role_ai/startpage.dart';
+import 'package:hi/Speaking/AnimeHome.dart';
 import 'package:hi/Speaking/ShowAnime.dart';
 import 'package:hi/utils/IconList.dart';
 import 'package:hi/utils/Loadinggame.dart';
+import 'package:hi/utils/LostNetwork.dart';
 import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -589,33 +595,52 @@ class _HomeState extends ConsumerState<Home> with TickerProviderStateMixin{
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF4CAF50),
-            Color(0xFF45A049),
-            Color(0xFF2E7D32),
-          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF6B4E9C), // Purple
+            Color(0xFF4A5F8C), // Blue-purple
+            Color(0xFF7B5C6E), // Mauve
+          ],
         ),
-        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF4CAF50).withOpacity(0.4),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 20,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
+      // decoration: BoxDecoration(
+      //   gradient: const LinearGradient(
+      //     colors: [
+      //       Color(0xFF4CAF50),
+      //       Color(0xFF45A049),
+      //       Color(0xFF2E7D32),
+      //     ],
+      //     begin: Alignment.topLeft,
+      //     end: Alignment.bottomRight,
+      //   ),
+      //   borderRadius: BorderRadius.circular(24),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: const Color(0xFF4CAF50).withOpacity(0.4),
+      //       blurRadius: 20,
+      //       offset: const Offset(0, 8),
+      //     ),
+      //   ],
+      // ),
       child: Stack(
         children: [
           // Background pattern
           Positioned(
-            right: -20,
-            top: -20,
+            right: -10,
+            top: -10,
             child: Container(
-              width: 120,
-              height: 120,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withOpacity(0.1),
@@ -960,7 +985,8 @@ class _HomeState extends ConsumerState<Home> with TickerProviderStateMixin{
                 const Color(0xFF74B9FF),
                 screenWidth,
                     () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoCallScreen()));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>TopicsScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SeeImageHome()));
                   // Navigate to conversation practice
                 },
               ),
@@ -1000,7 +1026,8 @@ class _HomeState extends ConsumerState<Home> with TickerProviderStateMixin{
                 // const Color(0xFF2ECC71),
                 screenWidth,
                     () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>BookStore()));
+                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>BookStore()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>NoInternetPage()));
                   // Navigate to reading book challenges
                   // router.push('(main)/Book/Reading')
                 },

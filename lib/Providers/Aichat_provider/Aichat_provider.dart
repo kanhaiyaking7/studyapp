@@ -11,7 +11,7 @@ final AiChat_provider = FutureProvider.family<List,dynamic>((ref,value) async {
 
   final output =await Supabase.instance.client.
   from(value.name).select().
-  eq("level_no", value.level);
+  eq("level_no", value.level + 1);
 
 
 

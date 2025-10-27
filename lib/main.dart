@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hi/features/auth/pages/Username.dart';
+import 'package:hi/features/universal/Checkinternet.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
 
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),
+          // home: Checkinternet(),
           home: UserName(),
         ));
 
